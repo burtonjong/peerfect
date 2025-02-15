@@ -1,46 +1,26 @@
-import { Gabarito, Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import ClientSideComponent from "@/components/client-side-component";
 
-import "./globals.css";
+import { Inter } from "next/font/google"
+import type React from "react"
+import "./globals.css"
+
+const inter = Inter({ subsets: ["latin"] })
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-const geistSans = Geist({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--geist-font",
-});
-
-const gabarito = Gabarito({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--gabarito-font",
-});
-
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${geistSans.variable} ${gabarito.variable}`}
-    >
-      <body className="bg-background text-foreground">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+    <html lang="en">
+      <body className={inter.className}>
           <div className="min-h-screen flex flex-col">
             <ClientSideComponent>
               <Header />
@@ -54,8 +34,8 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
+
