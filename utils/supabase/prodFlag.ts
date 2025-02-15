@@ -3,4 +3,4 @@
 export const API_URL =
   process.env.NODE_ENV === "production"
     ? "https://peerfect.vercel.app"
-    : "http://localhost:3001";
+    : "http://localhost:3000";
