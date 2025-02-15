@@ -1,13 +1,23 @@
-import Hero from "@/components/hero";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import Body from "@/components/landingpage/body"
+import Body2 from "@/components/landingpage/body2"
+import Body3 from "@/components/landingpage/body3"
+import Body4 from "@/components/landingpage/body4"
+import Body5 from "@/components/landingpage/body5"
+import Footer from "@/components/landingpage/footer"
+import Header from "@/components/landingpage/header"
 
-export default async function Home() {
+export default function LandingPage() {
   return (
-    <>
-      <Hero />
-      <main className="flex flex-1 flex-col gap-6 px-4">
-        <h2 className="mb-4 text-xl font-medium">Next steps</h2>
+    <div className="flex flex-col min-h-screen">
+      <Header/>
+      <main className="flex-1">
+        <Body/>
+        <Body2/>
+        <Body3/>
+        <Body4/>
+        <Body5/>
       </main>
-    </>
-  );
+      <Footer/>
+    </div>
+  )
 }
