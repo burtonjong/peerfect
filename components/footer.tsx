@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
-export default function Footer() {
+export default function Footer({ className }: { className?: string }) {
   return (
-    <footer className="w-full bg-background px-4 py-6 text-xs">
+    <footer className={`w-full bg-background px-4 py-6 text-xs ${className}`}>
       <div className="max-w-container mx-auto">
         <div className="border-t border-foreground/10 pt-0">
           <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
