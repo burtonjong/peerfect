@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--geist-font)", "Inter", "system-ui"],
+        brand: ["var(--gabarito-font)"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
