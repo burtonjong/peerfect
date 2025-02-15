@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 
 import { InfoIcon } from "lucide-react";
 
-import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function ProtectedPage() {
@@ -30,10 +29,6 @@ export default async function ProtectedPage() {
         <pre className="max-h-32 overflow-auto rounded border p-3 font-mono text-xs">
           {JSON.stringify(user, null, 2)}
         </pre>
-      </div>
-      <div>
-        <h2 className="mb-4 text-2xl font-bold">Next steps</h2>
-        <FetchDataSteps />
       </div>
     </div>
   );
