@@ -1,4 +1,5 @@
-import { Geist } from "next/font/google";
+import { Gabarito, Geist } from "next/font/google";
+import Link from "next/link";
 
 import { ThemeProvider } from "next-themes";
 
@@ -20,6 +21,13 @@ export const metadata = {
 const geistSans = Geist({
   display: "swap",
   subsets: ["latin"],
+  variable: "--geist-font",
+});
+
+const gabarito = Gabarito({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--gabarito-font",
 });
 
 export default function RootLayout({
@@ -28,7 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={geistSans.className} suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${gabarito.variable}`}
+    >
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"

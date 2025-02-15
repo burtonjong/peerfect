@@ -10,7 +10,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
   return (
     <form className="flex min-w-64 flex-1 flex-col">
-      <h1 className="text-2xl font-medium">Sign in</h1>
+      <h1 className="font-brand text-3xl font-medium">Sign in</h1>
       <p className="text-sm text-foreground">
         Don't have an account?{" "}
         <Link className="font-medium text-foreground underline" href="/sign-up">
@@ -35,7 +35,11 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           placeholder="Your password"
           required
         />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
+        <SubmitButton
+          pendingText="Signing In..."
+          formAction={signInAction}
+          className="font-brand text-md"
+        >
           Sign in
         </SubmitButton>
         <FormMessage message={searchParams} />
