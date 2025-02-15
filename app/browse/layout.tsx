@@ -1,19 +1,35 @@
-import type React from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Bell, Search, User } from "lucide-react"
-import Link from "next/link"
+import type React from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Bell, Search, User } from "lucide-react";
+import { SidebarLink } from "@/components/ui/sidebar-link";
+import Link from "next/link";
 
 export default function BrowseLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  const sidebarLinks = [
+    { name: "All Classes", href: "/browse" },
+    { name: "Creative Career", href: "/browse/creative" },
+    { name: "Creativity & Inspiration", href: "/browse/inspiration" },
+    { name: "Design", href: "/browse/design" },
+    { name: "Art & Illustration", href: "/browse/art" },
+    { name: "Film & Video", href: "/browse/video" },
+    { name: "Photography", href: "/browse/photography" },
+    { name: "Photography Career & Industry", href: "/browse/photo-career" },
+    { name: "Photography Techniques & Fundamentals", href: "/browse/photo-techniques" },
+    { name: "Photo Post-Production", href: "/browse/photo-post" },
+    { name: "Photographic Styles", href: "/browse/photo-styles" },
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "AI for Photography", href: "/browse/ai-photo" },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navigation Bar */}
       <header className="border-b bg-[#0A1A2B] text-white w-full fixed top-0 left-0 z-10">
-
         <div className="w-full px-4 h-16 flex items-center gap-4">
           <Link href="/" className="text-2xl font-bold">
             Peerfect
@@ -46,57 +62,17 @@ export default function BrowseLayout({
       <div className="flex-1 flex pt-16">
         {/* Left Sidebar */}
         <aside className="w-64 border-r p-6 space-y-4 fixed top-16 left-0 h-[calc(100vh-4rem)]">
-
           <nav className="space-y-1">
-            <Link href="/browse" className="block py-2 text-sm hover:text-primary">
-              All Classes
-            </Link>
-            <Link href="/browse/creative" className="block py-2 text-sm hover:text-primary">
-              Creative Career
-            </Link>
-            <Link href="/browse/inspiration" className="block py-2 text-sm hover:text-primary">
-              Creativity & Inspiration
-            </Link>
-            <Link href="/browse/design" className="block py-2 text-sm hover:text-primary">
-              Design
-            </Link>
-            <Link href="/browse/art" className="block py-2 text-sm hover:text-primary">
-              Art & Illustration
-            </Link>
-            <Link href="/browse/video" className="block py-2 text-sm hover:text-primary">
-              Film & Video
-            </Link>
-            <Link href="/browse/photography" className="block py-2 text-sm font-medium bg-slate-100 rounded-md px-3">
-              Photography
-            </Link>
+            {sidebarLinks.map((link) => (
+              <SidebarLink key={link.href} name={link.name} href={link.href} />
+            ))}
           </nav>
-
-          <div className="pt-4 space-y-1">
-            <Link href="/browse/photo-career" className="block py-2 text-sm hover:text-primary">
-              Photography Career & Industry
-            </Link>
-            <Link href="/browse/photo-techniques" className="block py-2 text-sm hover:text-primary">
-              Photography Techniques & Fundamentals
-            </Link>
-            <Link href="/browse/photo-post" className="block py-2 text-sm hover:text-primary">
-              Photo Post-Production
-            </Link>
-            <Link href="/browse/photo-styles" className="block py-2 text-sm hover:text-primary">
-              Photographic Styles
-            </Link>
-            <Link href="/dashboard" className="block py-2 text-sm hover:text-primary">
-              Dashboard
-            </Link>
-            <Link href="/browse/ai-photo" className="block py-2 text-sm hover:text-primary">
-              AI for Photography
-            </Link>
-          </div>
         </aside>
 
         {/* Main Content */}
         <main className="flex-1 p-8 ml-64">{children}</main>
       </div>
     </div>
-  )
+  );
 }
 

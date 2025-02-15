@@ -50,9 +50,9 @@ export default function RootLayout({
                 <div className="flex max-w-5xl flex-col gap-20 p-5">
                   {children}
                 </div>
-                <Footer />
               </div>
             </main>
+            <Footer />
           </div>
         </ThemeProvider>
       </body>
