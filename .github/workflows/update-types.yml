@@ -1,12 +1,14 @@
 name: Update database types
 on:
-  schedule:
-    - cron: '*/60 * * * *'
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '*.sql'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.head_ref != 'supabot**'
     steps:
     - uses: lyqht/generate-supabase-db-types-github-action@main
       with:
