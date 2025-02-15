@@ -70,7 +70,7 @@ export default function BrowseLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8 ml-64">{children}</main>
+        <main className="flex-1 p-8 ml-64 pb-16">{children}</main>
       </div>
     </div>
   );
