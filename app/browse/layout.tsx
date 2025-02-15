@@ -12,8 +12,9 @@ export default function BrowseLayout({
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navigation Bar */}
-      <header className="border-b bg-[#0A1A2B] text-white">
-        <div className="container mx-auto px-4 h-16 flex items-center gap-4">
+      <header className="border-b bg-[#0A1A2B] text-white w-full fixed top-0 left-0 z-10">
+
+        <div className="w-full px-4 h-16 flex items-center gap-4">
           <Link href="/" className="text-2xl font-bold">
             Peerfect
           </Link>
@@ -42,9 +43,10 @@ export default function BrowseLayout({
         </div>
       </header>
 
-      <div className="flex-1 flex">
+      <div className="flex-1 flex pt-16">
         {/* Left Sidebar */}
-        <aside className="w-64 border-r p-6 space-y-4">
+        <aside className="w-64 border-r p-6 space-y-4 fixed top-16 left-0 h-[calc(100vh-4rem)]">
+
           <nav className="space-y-1">
             <Link href="/browse" className="block py-2 text-sm hover:text-primary">
               All Classes
@@ -92,7 +94,7 @@ export default function BrowseLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 p-8 ml-64">{children}</main>
       </div>
     </div>
   )
