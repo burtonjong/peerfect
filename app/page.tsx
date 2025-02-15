@@ -1,13 +1,6 @@
-import Hero from "@/components/hero";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import { redirect } from "next/navigation";
 
-export default async function Home() {
-  return (
-    <>
-      <Hero />
-      <main className="flex flex-1 flex-col gap-6 px-4">
-        <h2 className="mb-4 text-xl font-medium">Next steps</h2>
-      </main>
-    </>
-  );
+export default function Home() {
+  redirect("/dashboard");
+  return null;
 }
