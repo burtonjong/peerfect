@@ -22,7 +22,7 @@ export default async function Signup(props: {
 
   return (
     <>
-      <form className="mx-auto flex min-w-64 max-w-64 flex-col">
+      <form className="mx-auto flex min-w-96 max-w-96 flex-col">
         <h1 className="font-brand text-3xl font-medium">Sign up</h1>
         <p className="text text-sm text-foreground">
           Already have an account?{" "}
@@ -31,6 +31,8 @@ export default async function Signup(props: {
           </Link>
         </p>
         <div className="mt-8 flex flex-col gap-2 [&>input]:mb-3">
+          <Label htmlFor="name">Name</Label>
+          <Input name="name" placeholder="Mr. Calgary Hack" required />
           <Label htmlFor="email">Email</Label>
           <Input name="email" placeholder="you@example.com" required />
           <Label htmlFor="password">Password</Label>
