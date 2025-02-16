@@ -6,10 +6,10 @@ type SidebarProps = {
 
 function Sidebar({ skills }: SidebarProps) {
   const sidebarLinks = [
-    { name: "All Skills", href: "/browse" },
+    { name: "All Skills", href: "/dashboard/bros" },
     ...skills.map((skill) => ({
       name: skill,
-      href: `dashboard/browse/${skill.toLowerCase()}`,
+      href: `/dashboard/browse/${skill.toLowerCase()}`,
     })),
   ];
 
