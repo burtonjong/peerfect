@@ -1,9 +1,10 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
 import Post from "@/components/browse/post";
 import Sidebar from "@/components/browse/sidebar";
+import Header from "@/components/header";
 
 type Post = {
   id: string;
@@ -14,9 +15,14 @@ type Post = {
   created_at: string | null;
 };
 
-export default function BrowsePage() {
+export default function SkillPage() {
+  const params = useParams();
+  const skill = params.skill as string;
+
+  const capitalizedSkill = skill.charAt(0).toUpperCase() + skill.slice(1);
+
   const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
   const [sortedPosts, setSortedPosts] = useState<Post[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -24,16 +30,10 @@ export default function BrowsePage() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      try {
-        const res = await fetch(`${window.location.origin}/api/posts`);
-        const data = await res.json();
-        if (data && !data.error) {
-          setPosts(data);
-        }
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
+      const res = await fetch(`${window.location.origin}/api/posts`);
+      const data = await res.json();
+      if (data && !data.error) {
+        setPosts(data);
       }
     };
 
@@ -54,9 +54,15 @@ export default function BrowsePage() {
   }, []);
 
   useEffect(() => {
-    if (posts.length > 0) {
-      const sorted = [...posts].sort((a, b) => {
-        if (!a.created_at || !b.created_at) return 0; // Handle invalid or missing dates
+    if (capitalizedSkill && posts.length > 0) {
+      setFilteredPosts(posts.filter((post) => post.skill === capitalizedSkill));
+    }
+  }, [capitalizedSkill, posts]);
+
+  useEffect(() => {
+    if (filteredPosts.length > 0) {
+      const sorted = [...filteredPosts].sort((a, b) => {
+        if (!a.created_at || !b.created_at) return 0;
         const dateA = new Date(a.created_at);
         const dateB = new Date(b.created_at);
         return sortOrder === "desc"
@@ -64,12 +70,14 @@ export default function BrowsePage() {
           : dateA.getTime() - dateB.getTime();
       });
       setSortedPosts(sorted);
+    } else {
+      setSortedPosts([]);
     }
-  }, [posts, sortOrder]);
+  }, [sortOrder, filteredPosts]);
 
   const handleSortChange = (order: "asc" | "desc") => {
     setSortOrder(order);
-    setDropdownOpen(false); // Close dropdown after selection
+    setDropdownOpen(false);
   };
 
   return (
@@ -79,7 +87,7 @@ export default function BrowsePage() {
         <main className="ml-64 flex-1 p-8 pb-16">
           <div className="container mx-auto min-w-[750px] px-4">
             <div className="mb-8 mt-12 flex items-center justify-between">
-              <h1 className="text-4xl font-bold">Browse Skills</h1>
+              <h1 className="text-4xl font-bold">Posts for {capitalizedSkill}</h1>
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen((prev) => !prev)}
@@ -107,9 +115,7 @@ export default function BrowsePage() {
             </div>
 
             <div className="space-y-6">
-              {loading ? (
-                <p>Loading posts...</p>
-              ) : sortedPosts.length > 0 ? (
+              {sortedPosts.length > 0 ? (
                 sortedPosts.map((post) => (
                   <Post
                     key={post.id}
