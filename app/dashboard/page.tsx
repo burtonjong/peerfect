@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import { Plus, SchoolIcon as Teach } from "lucide-react";
+import { Plus } from "lucide-react";
 
+import CreateMeetButton from "@/components/CreateMeetButton";
 import Leaderboard from "@/components/dashboard/leaderboard";
 import RecentChats from "@/components/dashboard/recentChats";
 import YourPosts from "@/components/dashboard/yourPosts";
@@ -100,9 +101,7 @@ export default async function DashboardPage() {
             Offer Your Expertise
           </h3>
           <p className="text-gray-600">Share your skills with others</p>
-          <Button className="mt-4 w-full">
-            <Teach className="mr-2 h-4 w-4" /> Browse Listings
-          </Button>
+          <CreateMeetButton />
         </div>
       </div>
 
