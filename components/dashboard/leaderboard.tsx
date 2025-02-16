@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
+import { Separator } from "../ui/separator";
+
 interface Leader {
   id: string;
   username: string;
@@ -16,6 +18,32 @@ interface Leader {
   skills_had: string[];
   created_at: string;
 }
+
+const getPositionColor = (position: number) => {
+  switch (position) {
+    case 1:
+      return "bg-yellow-500";
+    case 2:
+      return "bg-gray-300";
+    case 3:
+      return "bg-amber-600";
+    default:
+      return "bg-gray-500";
+  }
+};
+
+const getBorderColor = (position: number) => {
+  switch (position) {
+    case 1:
+      return "border-2 border-primary";
+    case 2:
+      return "border-2 border-[#004F90]";
+    case 3:
+      return "border-2 border-[#004277]";
+    default:
+      return "";
+  }
+};
 
 export default function Leaderboard({
   leaderboard,
@@ -40,14 +68,18 @@ export default function Leaderboard({
   if (!mounted) {
     return null; // or a loading placeholder
   }
+
+  const topTenLeaders = leaderboard.slice(0, 10);
+
   return (
     <>
-      <h2 className="mb-4 font-brand text-2xl font-semibold">
+      <h2 className="mb-3 font-brand text-2xl font-semibold">
         Peerfect Leaderboard
       </h2>
+      <Separator className="mb-4" />
       <div className="space-y-4">
-        {leaderboard && leaderboard.length > 0 ? (
-          leaderboard.map((leader, index) => (
+        {topTenLeaders.length > 0 ? (
+          topTenLeaders.map((leader, index) => (
             <div
               key={leader.id}
               className="animate-fade-in-up translate-y-4"
@@ -55,9 +87,16 @@ export default function Leaderboard({
               onMouseEnter={() => handleHoverStart(leader.id)}
               onMouseLeave={handleHoverEnd}
             >
-              <Card className="overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg">
+              <Card
+                className={`overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg ${getBorderColor(index + 1)}`}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full ${getPositionColor(index + 1)} font-bold text-white`}
+                    >
+                      {index + 1}
+                    </div>
                     <Avatar className="h-12 w-12">
                       <AvatarImage
                         src={`https://api.dicebear.com/6.x/initials/svg?seed=${leader.username}`}
@@ -68,7 +107,9 @@ export default function Leaderboard({
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-grow">
-                      <h3 className="text-xl font-semibold text-primary">
+                      <h3
+                        className={`text-xl font-semibold ${index < 3 ? "text-primary" : "text-foreground"}`}
+                      >
                         {leader.username}
                       </h3>
                       <p className="text-sm text-muted-foreground">
@@ -76,7 +117,9 @@ export default function Leaderboard({
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-2xl font-bold text-primary">
+                      <span
+                        className={`text-2xl font-bold ${index < 3 ? "text-primary" : "text-foreground"}`}
+                      >
                         {leader.points}
                       </span>
                       <p className="text-sm text-muted-foreground">points</p>
@@ -96,13 +139,13 @@ export default function Leaderboard({
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {leader.skills_had.length > 0 ? (
-                        leader.skills_had.map((skill, index) => (
-                          <Badge key={index} variant="secondary">
+                        leader.skills_had.map((skill, skillIndex) => (
+                          <Badge key={skillIndex} variant="secondary">
                             {skill}
                           </Badge>
                         ))
                       ) : (
-                        <p className="text-gray-500">
+                        <p className="text-muted-foreground">
                           No skills to display yet.
                         </p>
                       )}

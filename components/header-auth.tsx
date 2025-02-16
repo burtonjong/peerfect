@@ -72,7 +72,7 @@ export default async function HeaderAuth() {
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-2 text-sm font-medium transition-colors duration-200 hover:text-gray-900"
+            className="flex items-center gap-2 text-sm font-medium transition-colors duration-200 hover:text-gray-400"
           >
             <item.icon className="h-4 w-4" />
             {item.label}

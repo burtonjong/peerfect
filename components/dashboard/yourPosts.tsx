@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Search, Send } from "lucide-react";
 
 import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 
 export default function YourPosts({
   usersPosts,
@@ -15,9 +16,8 @@ export default function YourPosts({
 }) {
   return (
     <>
-      <h2 className="mb-4 pb-2 font-brand text-2xl font-semibold">
-        Your Posts
-      </h2>
+      <h2 className="pb-2 font-brand text-2xl font-semibold">Your Posts</h2>
+      <Separator className="mb-3" />
       <div className="mb-12 space-y-4">
         {usersPosts && usersPosts.length > 0 ? (
           usersPosts.map((post: any) => (
