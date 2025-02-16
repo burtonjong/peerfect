@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 
+//placeholder for now
 const skills = ["python", "java", "c", "javascript"];
 
 export default function CreatePost() {
@@ -63,7 +64,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="container w-full mx-auto px-4 py-8 flex justify-center">
+    <div className="container min-w-[750px] mx-auto px-4 py-8 flex justify-center">
       <div className="border shadow-lg rounded-lg p-6 max-w-lg w-full relative">
         <h2 className="text-3xl font-bold mb-6 text-center">Create a New Post</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
