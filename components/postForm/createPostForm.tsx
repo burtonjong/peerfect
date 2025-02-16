@@ -1,16 +1,17 @@
 "use client";
 
-import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm, Controller } from "react-hook-form"
+import * as z from "zod"
+import Dropdown from "@/components/profile/dropdown"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Tag, Star, Send, X } from "lucide-react"
+import { redirect } from 'next/navigation'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
-
-import Dropdown from "@/components/profile/dropdown";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 const postFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -70,121 +71,128 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
       const result = await res.json();
 
       if (res.ok) {
-        form.reset();
-        setSkill("");
+        form.reset()
+        setSkill("")
+
       } else {
         setError(result.error || "An error occurred while creating the post.");
       }
     } catch (err) {
       setError("An unexpected error occurred.");
     } finally {
-      setLoading(false);
-      redirect(`/dashboard`);
+      setLoading(false)
+      redirect(`/dashboard/browse?modal=true`)
+
+
     }
   };
 
   return (
-    <div className="container max-w-3xl py-8">
-      <Card className="border border-gray-200 bg-white shadow-lg dark:border-white/10 dark:bg-background/10 dark:shadow-none dark:backdrop-blur-sm">
-        <CardContent className="pt-6">
-          <h2 className="mb-6 select-none bg-gradient-to-r from-[#5B9BF3] to-[#8AB4F8] bg-clip-text text-center text-3xl font-bold text-transparent">
-            Create a New Post
-          </h2>
-          <Separator className="mb-6 bg-gray-200 dark:bg-white/20" />
-          <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                Title
-              </label>
+    <div className="max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6 px-4">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Create Post</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
+          onClick={() => window.history.back()}
+        >
+          <X size={24} />
+        </Button>
+      </div>
+
+      {/* Main Form */}
+      <Card className="bg-white dark:bg-[#1A1F2C] border-none shadow-lg">
+        <CardContent className="p-0">
+          <form onSubmit={handleSubmit(handleFormSubmit)}>
+            {/* Title Section */}
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <Controller
                 control={control}
                 name="title"
                 render={({ field }) => (
-                  <input
+                  <Input
                     {...field}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 dark:border-white/20 dark:bg-background/20 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-[#5B9BF3] dark:focus:ring-[#5B9BF3]/50"
-                    placeholder="Enter post title"
+                    className="text-2xl bg-transparent border-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 p-0 focus:bg-gray-50 dark:focus:bg-[#2A2F3C] transition-colors"
+                    placeholder="Post title"
                   />
                 )}
               />
-              {errors.title && (
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  {errors.title.message}
-                </p>
-              )}
+              {errors.title && <p className="text-red-500 dark:text-red-400 text-sm mt-2">{errors.title.message}</p>}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                Description
-              </label>
+            {/* Body Section */}
+            <div className="p-6">
               <Controller
                 control={control}
                 name="body"
                 render={({ field }) => (
-                  <textarea
+                  <Textarea
                     {...field}
-                    rows={6}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 dark:border-white/20 dark:bg-background/20 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-[#5B9BF3] dark:focus:ring-[#5B9BF3]/50"
-                    placeholder="Describe your post in detail"
+                    rows={12}
+                    className="bg-transparent border-none text-gray-700 dark:text-gray-200 focus:border-none placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 p-0 text-lg resize-none focus:bg-gray-50 dark:focus:bg-[#2A2F3C] transition-colors"
+                    placeholder="Write your post content here..."
                   />
                 )}
               />
-              {errors.body && (
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  {errors.body.message}
-                </p>
-              )}
+              {errors.body && <p className="text-red-500 dark:text-red-400 text-sm mt-2">{errors.body.message}</p>}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                Assign Skill
-              </label>
-              <Dropdown enums={enums} value={skill} setter={setSkill} />
-              {errors.skill && (
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  {errors.skill.message}
-                </p>
-              )}
-            </div>
+            {/* Bottom Toolbar */}
+            <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-[#0F1218]/50">
+              <div className="flex flex-wrap gap-4 items-center">
+                {/* Skill Dropdown */}
+                <div className="flex-1 min-w-[200px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Tag size={16} className="text-[#5B9BF3]" />
+                    <span className="text-sm text-gray-700 dark:text-gray-200">Skill</span>
+                  </div>
+                  <Dropdown enums={enums} value={skill} setter={setSkill} />
+                  {errors.skill && (
+                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.skill.message}</p>
+                  )}
+                </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                Points
-              </label>
-              <Controller
-                control={control}
-                name="points"
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="number"
-                    min="0"
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 dark:border-white/20 dark:bg-background/20 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-[#5B9BF3] dark:focus:ring-[#5B9BF3]/50"
-                    placeholder="Enter points value"
+                {/* Points Input */}
+                <div className="w-32">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Star size={16} className="text-[#5B9BF3]" />
+                    <span className="text-sm text-gray-700 dark:text-gray-200">Points</span>
+                  </div>
+                  <Controller
+                    control={control}
+                    name="points"
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        type="number"
+                        min="0"
+                        className="bg-white dark:bg-[#0F1218] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-[#5B9BF3] transition-colors"
+                        placeholder="0"
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.points && (
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  {errors.points.message}
-                </p>
+                  {errors.points && (
+                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.points.message}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-[#5B9BF3] hover:bg-[#4A8AE2] text-white px-6 py-2 rounded-full ml-auto flex items-center gap-2 h-10"
+                >
+                  <Send size={16} />
+                  {loading ? "Posting..." : "Post"}
+                </Button>
+              </div>
+
+              {error && (
+                <div className="mt-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg">
+                  <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+                </div>
               )}
-            </div>
-
-            {error && (
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-            )}
-
-            <div className="flex justify-center pt-4">
-              <Button
-                type="submit"
-                disabled={loading}
-                className="rounded-lg bg-blue-600 px-8 py-2 text-white shadow-md transition-colors hover:bg-blue-700 hover:shadow-lg dark:bg-[#5B9BF3] dark:hover:bg-[#4A8AE2]"
-              >
-                {loading ? "Submitting..." : "Submit Post"}
-              </Button>
             </div>
           </form>
         </CardContent>
