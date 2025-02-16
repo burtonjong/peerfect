@@ -6,6 +6,13 @@ import { createClient } from "@/utils/supabase/server";
 
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -45,11 +52,37 @@ export default async function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       Hey, {user.email}!
-      <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
-          Sign out
-        </Button>
-      </form>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">Menu</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/profile">My Profile</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/messages">Messages</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">Account Settings</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/help">Help & Support</Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <form action={signOutAction}>
+              <Button
+                type="submit"
+                variant="ghost"
+                className="w-full p-0 text-left"
+              >
+                Sign out
+              </Button>
+            </form>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   ) : (
     <div className="flex gap-2">
