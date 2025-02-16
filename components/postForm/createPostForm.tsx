@@ -10,6 +10,8 @@ import Dropdown from "@/components/profile/dropdown"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Tag, Star, Send, X } from "lucide-react"
+import { redirect } from 'next/navigation'
+
 
 const postFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -71,6 +73,7 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
       if (res.ok) {
         form.reset()
         setSkill("")
+
       } else {
         setError(result.error || "An error occurred while creating the post.")
       }
@@ -78,6 +81,9 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
       setError("An unexpected error occurred.")
     } finally {
       setLoading(false)
+      redirect(`/dashboard/browse?modal=true`)
+
+
     }
   }
 
