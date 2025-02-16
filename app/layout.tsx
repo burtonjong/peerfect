@@ -11,11 +11,13 @@ import Header from "@/components/header";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--inter-font" });
+const gabarito = Gabarito({ subsets: ["latin"], variable: "--gabarito-font" });
 
-const gabarito = Gabarito({
-  subsets: ["latin"],
-  variable: "--gabarito-font",
-});
+export const metadata: Metadata = {
+  title: "Peerfect - Connect with Skilled Peers",
+  description:
+    "Peerfect matches people with skills to those who need help. Learn, grow, and succeed together.",
+};
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -28,9 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${gabarito.variable} ${inter.className}`}
-      >
+      <body className={`${inter.variable} ${gabarito.variable} ${inter.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -48,8 +48,8 @@ export default function RootLayout({
                 </div>
               </div>
             </main>
+            <Footer className="relative z-10" />
           </div>
-          <Footer className="relative z-10" />
         </ThemeProvider>
       </body>
     </html>

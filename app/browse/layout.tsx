@@ -1,11 +1,9 @@
-import Link from "next/link";
 import type React from "react";
-
-import { Bell, Search, User } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Bell, Search, User } from "lucide-react";
 import { SidebarLink } from "@/components/ui/sidebar-link";
+import Link from "next/link";
 
 export default function BrowseLayout({
   children,
@@ -21,10 +19,7 @@ export default function BrowseLayout({
     { name: "Film & Video", href: "/browse/video" },
     { name: "Photography", href: "/browse/photography" },
     { name: "Photography Career & Industry", href: "/browse/photo-career" },
-    {
-      name: "Photography Techniques & Fundamentals",
-      href: "/browse/photo-techniques",
-    },
+    { name: "Photography Techniques & Fundamentals", href: "/browse/photo-techniques" },
     { name: "Photo Post-Production", href: "/browse/photo-post" },
     { name: "Photographic Styles", href: "/browse/photo-styles" },
     { name: "Dashboard", href: "/dashboard" },
@@ -32,19 +27,19 @@ export default function BrowseLayout({
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Top Navigation Bar */}
-      <header className="fixed left-0 top-0 z-10 w-full border-b bg-[#0A1A2B] text-white">
-        <div className="flex h-16 w-full items-center gap-4 px-4">
+      <header className="border-b bg-[#0A1A2B] text-white w-full fixed top-0 left-0 z-10">
+        <div className="w-full px-4 h-16 flex items-center gap-4">
           <Link href="/" className="text-2xl font-bold">
             Peerfect
           </Link>
 
-          <div className="relative mx-4 max-w-2xl flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+          <div className="relative flex-1 max-w-2xl mx-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search classes, digital products, teachers, and more"
-              className="border-white/20 bg-white/10 pl-10 text-white placeholder:text-white/60"
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60"
             />
           </div>
 
@@ -59,16 +54,14 @@ export default function BrowseLayout({
             <Button variant="ghost" className="text-white">
               <User className="h-5 w-5" />
             </Button>
-            <Button className="bg-[#4ADE80] text-[#0A1A2B] hover:bg-[#4ADE80]/90">
-              Start Now
-            </Button>
+            <Button className="bg-[#4ADE80] text-[#0A1A2B] hover:bg-[#4ADE80]/90">Start Now</Button>
           </nav>
         </div>
       </header>
 
-      <div className="flex flex-1 pt-16">
+      <div className="flex-1 flex pt-16">
         {/* Left Sidebar */}
-        <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 space-y-4 border-r p-6">
+        <aside className="w-64 border-r p-6 space-y-4 fixed top-16 left-0 h-[calc(100vh-4rem)]">
           <nav className="space-y-1">
             {sidebarLinks.map((link) => (
               <SidebarLink key={link.href} name={link.name} href={link.href} />
@@ -77,7 +70,7 @@ export default function BrowseLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="ml-64 flex-1 p-8 pb-16">{children}</main>
+        <main className="flex-1 p-8 ml-64 pb-16">{children}</main>
       </div>
     </div>
   );

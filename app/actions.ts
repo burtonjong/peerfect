@@ -14,10 +14,14 @@ export const signUpAction = async (formData: FormData) => {
   const origin = (await headers()).get("origin");
 
   if (!email || !password || !username) {
-    return { success: false, message: "Email and password are required" };
+    return encodedRedirect(
+      "error",
+      "/sign-up",
+      "Email and password are required"
+    );
   }
 
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -28,30 +32,14 @@ export const signUpAction = async (formData: FormData) => {
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return { success: false, message: error.message };
+    return encodedRedirect("error", "/sign-up", error.message);
+  } else {
+    return encodedRedirect(
+      "success",
+      "/sign-up",
+      "Thanks for signing up! Please check your email for a verification link."
+    );
   }
-
-  if (data.user) {
-    const { error: profileError } = await supabase
-      .from('user_profiles')
-      .insert([
-        {
-          id: data.user.id,
-          username: username,
-        }
-      ]);
-
-    if (profileError) {
-      console.error(profileError);
-      return { success: false, message: "Failed to create user profile" };
-    }
-  }
-
-  return {
-    success: true,
-    message:
-      "Thanks for signing up! Please check your email for a verification link.",
-  };
 };
 
 export const signInAction = async (formData: FormData) => {
