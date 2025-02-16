@@ -10,7 +10,6 @@ export default function Message({
     user: {
       username: string;
       user_id: string;
-      profilePicture: string;
     };
     content: string;
   };
@@ -24,7 +23,7 @@ export default function Message({
     >
       {message?.user?.user_id !== userId && (
         <Avatar>
-          <AvatarImage src={message?.user?.profilePicture} />
+          {/* <AvatarImage src={message?.user?.profilePicture} /> */}
           <AvatarFallback>{message?.user?.username[0]}</AvatarFallback>
         </Avatar>
       )}
@@ -40,7 +39,7 @@ export default function Message({
       </div>
       {message?.user?.user_id === userId && (
         <Avatar>
-          <AvatarImage src={message?.user?.profilePicture} />
+          {/* <AvatarImage src={message?.user?.profilePicture} /> */}
           <AvatarFallback>{message?.user?.username[0]}</AvatarFallback>
         </Avatar>
       )}
