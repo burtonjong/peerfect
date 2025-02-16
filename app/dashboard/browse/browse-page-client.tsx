@@ -49,7 +49,12 @@ export default function BrowsePageClient({
           ? dateB.getTime() - dateA.getTime()
           : dateA.getTime() - dateB.getTime();
       });
-      setSortedPosts(sorted);
+      // remove duplicates
+      const unique = sorted.filter(
+        (post, idx, self) => self.findIndex((p) => p.id === post.id) === idx
+      );
+
+      setSortedPosts(unique);
     }
   }, [posts, sortOrder]);
 
@@ -92,7 +97,7 @@ export default function BrowsePageClient({
 
         {sortedPosts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {sortedPosts.map((post) => (
+            {sortedPosts.map((post, idx) => (
               <Post
                 key={post.id}
                 id={post.id}
@@ -102,6 +107,7 @@ export default function BrowsePageClient({
                 created_at={post.created_at}
                 poster_id={post.author_id}
                 user_id={userId as string}
+                modal={idx === 0 ? modal : false}
               />
             ))}
           </div>

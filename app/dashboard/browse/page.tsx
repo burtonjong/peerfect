@@ -26,13 +26,7 @@ export default async function BrowsePage({ searchParams }: Props) {
 
   if (error) {
     console.error(error);
-    return (
-      <BrowsePageClient
-        initialPosts={[]}
-        userId={userId}
-        modal={freakyBoolean}
-      />
-    );
+    return <BrowsePageClient initialPosts={[]} userId={userId} modal={false} />;
   }
 
   // Add proper type annotations for posts
