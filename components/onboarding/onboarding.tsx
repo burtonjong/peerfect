@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,13 +17,16 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { createClient } from "@/utils/supabase/client";
 
-export default function Onboarding() {
+export default function Onboarding({
+  enums,
+  user,
+}: {
+  enums: string[];
+  user: any;
+}) {
   const supabase = createClient();
 
-  const searchParams = useSearchParams();
-
-  const enums = searchParams.get("enums")?.split(",") || [];
-  const userId = searchParams.get("userId") || "";
+  const userId = user.id;
 
   const [step, setStep] = useState(1);
   const [skillsGoodAt, setSkillsGoodAt] = useState<string[]>([]);
