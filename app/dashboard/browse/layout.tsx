@@ -21,11 +21,9 @@ export default async function BrowseLayout({
 }) {
   const skills = await fetchSkills();
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex flex-1">
-        {children}
-        <Sidebar skills={skills} />
-      </div>
+    <div className="flex flex-1">
+      {children}
+      <Sidebar skills={skills} />
     </div>
   );
 }
