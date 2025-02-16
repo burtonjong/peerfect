@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,6 +26,7 @@ export default function Onboarding({
   user: any;
 }) {
   const supabase = createClient();
+  const router = useRouter();
 
   const userId = user.id;
 
@@ -68,8 +70,8 @@ export default function Onboarding({
         const { error } = await supabase
           .from("user_profiles")
           .update({
-            skills_good_at: skillsGoodAt,
-            skills_need_help_with: skillsNeedHelpWith,
+            skills_had: skillsGoodAt,
+            skills_needed: skillsNeedHelpWith,
           })
           .eq("id", userId);
 
@@ -78,12 +80,14 @@ export default function Onboarding({
         }
       } catch (error) {
         console.error("Failed to update skills", error);
+      } finally {
+        router.push("/dashboard");
       }
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold text-primary">
