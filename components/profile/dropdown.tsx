@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Button } from "../ui/button";
 
 export default function Dropdown({
   value,
@@ -23,6 +24,7 @@ export default function Dropdown({
       <button
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between rounded-xl border p-2 text-sm"
+        type="button"
       >
         {value || "Select an item..."}
         <span>▼</span>
