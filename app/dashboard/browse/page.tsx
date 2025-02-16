@@ -1,16 +1,15 @@
-import { ReactNode, Suspense } from "react";
+import { ReactNode, Suspense, use } from "react";
 
 import { createClient } from "@/utils/supabase/server";
 
 import BrowsePageClient from "./browse-page-client";
 
-export default async function BrowsePage(props: {
-  children: ReactNode;
-  params: Promise<{ modal: string }>;
-}) {
-  const { children, params } = props;
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
-  const { modal } = await params;
+export default async function BrowsePage({ searchParams }: Props) {
+  const { modal } = use(searchParams);
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
 
