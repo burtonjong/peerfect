@@ -30,7 +30,7 @@ export default async function ChatPageServer({
     return data;
   };
 
-  const getConversationId = async (postId: string, userId: string) => {
+  const getConversationId = async (postId: string) => {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("conversations")
@@ -48,7 +48,7 @@ export default async function ChatPageServer({
 
   const post = await getPost(postId);
 
-  const conversationId = await getConversationId(postId, userId);
+  const conversationId = await getConversationId(postId);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

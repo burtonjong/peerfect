@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Send } from "lucide-react";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { createClient } from "@/utils/supabase/client";
 
 import Message from "./Message";
@@ -19,9 +20,11 @@ export default function ChatPage({
     title: string;
     body: string;
     skilltag: string;
+    created_at: string;
     user: {
       name: string;
       id: string;
+      bio: string;
     };
   };
   conversationId: string;
@@ -182,18 +185,24 @@ export default function ChatPage({
     <div className="flex max-h-[calc(100vh-208px)] w-full flex-1">
       <div className="m-2 flex w-1/3 flex-col justify-between rounded-lg border border-muted-foreground/20 bg-muted/50 p-4 shadow-md">
         <div>
-          <h5 className="mb-2 text-xl font-bold">{post.title}</h5>
-          <p className="text-base">
-            {post.body}
-            <br />
-            <span className="text-sm font-semibold text-gray-600">
-              Skill: {post.skilltag}
+          <h5 className="mb-2 flex flex-row items-center font-brand text-xl font-bold">
+            {post.title}{" "}
+            <span className="ml-2 w-min rounded-full bg-primary px-2 py-1 font-sans text-xs font-semibold text-white">
+              {post.skilltag}
             </span>
+          </h5>
+          <p className="mb-2 flex flex-col text-base">{post.body}</p>
+          <p className="text-sm text-muted-foreground">
+            Created on {new Date(post.created_at).toDateString()}
           </p>
         </div>
         <div className="mt-4 flex items-center p-4">
+          <Avatar>
+            <AvatarFallback>{post?.user?.name[0].toUpperCase()}</AvatarFallback>
+          </Avatar>
           <div className="ml-3">
             <h6 className="text-sm font-semibold">{post?.user?.name}</h6>
+            <p className="text-xs text-muted-foreground">{post?.user?.bio}</p>
           </div>
         </div>
       </div>

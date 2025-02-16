@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--geist-font)", "Inter", "system-ui"],
+        sans: ["var(--inter-font)", "Inter", "system-ui"],
         brand: ["var(--gabarito-font)"],
       },
       colors: {
