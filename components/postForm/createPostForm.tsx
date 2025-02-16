@@ -77,7 +77,7 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
   };
 
   return (
-    <CardContent>
+    <CardContent className="border rounded-lg pt-4">
       <h2 className="text-3xl font-bold mb-6 text-center">Create a New Post</h2>
       <Separator className="mb-6" />
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
