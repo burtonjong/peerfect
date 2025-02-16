@@ -35,11 +35,11 @@ export default async function ChatPageServer({
     const { data, error } = await supabase
       .from("conversations")
       .select("id")
-      .eq("post_id", postId);
-    if (error) {
-      throw error;
-    }
-    return data[0].id;
+      .eq("post_id", postId)
+      .single();
+
+    if (error) throw error;
+    return data.id;
   };
 
   const userId = (await getUser()).user.id;

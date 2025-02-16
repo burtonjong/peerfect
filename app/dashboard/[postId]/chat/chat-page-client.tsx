@@ -223,13 +223,21 @@ export default function ChatPage({
         ? readyToEnd.filter((id) => id !== userId)
         : [...readyToEnd, userId];
 
-      const { error } = await supabase
+      console.log("Updating ready_to_end with:", newReadyToEnd);
+
+      const { data, error } = await supabase
         .from("conversations")
         .update({ ready_to_end: newReadyToEnd })
-        .eq("id", conversationId);
+        .eq("id", conversationId)
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase update error:", error);
+        throw error;
+      }
 
+      console.log("Update response:", data);
       setReadyToEnd(newReadyToEnd);
     } catch (error) {
       console.error("Error updating chat status:", error);
