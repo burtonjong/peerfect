@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
+
 import Post from "@/components/browse/post";
 
 type Post = {
@@ -41,7 +43,7 @@ export default function BrowsePage() {
   useEffect(() => {
     if (posts.length > 0) {
       const sorted = [...posts].sort((a, b) => {
-        if (!a.created_at || !b.created_at) return 0; // Handle invalid or missing dates
+        if (!a.created_at || !b.created_at) return 0;
         const dateA = new Date(a.created_at);
         const dateB = new Date(b.created_at);
         return sortOrder === "desc"
@@ -54,7 +56,6 @@ export default function BrowsePage() {
 
   const handleSortChange = (order: "asc" | "desc") => {
     setSortOrder(order);
-    setDropdownOpen(false); // Close dropdown after selection
   };
 
   return (
@@ -100,6 +101,7 @@ export default function BrowsePage() {
                 body={post.body}
                 skill={post.skill}
                 created_at={post.created_at}
+                author_id={post.author_id}
               />
             ))
           ) : (
