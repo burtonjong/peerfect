@@ -181,7 +181,7 @@ export default function ChatPage({
         },
         (payload) => {
           if (payload.new) {
-            setReadyToEnd(payload.new.ready_to_end || []);
+            setReadyToEnd((payload.new as { ready_to_end: string[] }).ready_to_end || []);
           }
         }
       )
