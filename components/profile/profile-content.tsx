@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
-import type { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,121 +19,146 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { createClient } from "@/utils/supabase/client";
 
-interface ProfileContentProps {
-  form: UseFormReturn<{
-    firstName: string;
-    lastName: string;
-    age: number;
-    bio: string;
-    skillsGoodAt: string[];
-    skillsNeedHelpWith: string[];
-    isAvailableToHelp: boolean;
-    isLookingForHelp: boolean;
-  }>;
-  onSubmit: (data: any) => void;
-}
+import Dropdown from "./dropdown";
 
-export function ProfileContent({ form, onSubmit }: ProfileContentProps) {
+const profileFormSchema = z.object({
+  skillsGoodAt: z.array(z.string()),
+  skillsNeedHelpWith: z.array(z.string()),
+  points: z.number(),
+});
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
+const defaultValues: Partial<ProfileFormValues> = {
+  skillsGoodAt: [],
+  skillsNeedHelpWith: [],
+  points: 0,
+};
+
+export function ProfileContent({ user, enums }: { user: any; enums: any }) {
+  const supabase = createClient();
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues,
+  });
+
+  const selectedSkillsGoodAt = form.watch("skillsGoodAt");
+  const selectedSkillsNeedHelpWith = form.watch("skillsNeedHelpWith");
+
+  const allSelectedSkills = [
+    ...selectedSkillsGoodAt,
+    ...selectedSkillsNeedHelpWith,
+  ];
+
+  const availableEnums = enums.filter(
+    (skill: string) => !allSelectedSkills.includes(skill)
+  );
+  const [loading, setLoading] = useState(true);
   const [newSkillGoodAt, setNewSkillGoodAt] = useState("");
   const [newSkillNeedHelpWith, setNewSkillNeedHelpWith] = useState("");
 
-  const addSkill = (skillType: "skillsGoodAt" | "skillsNeedHelpWith") => {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (user) {
+          const { data, error } = await supabase
+            .from("user_profiles")
+            .select("skills_had, skills_needed, points")
+            .eq("id", user.id)
+            .single();
+
+          if (error) {
+            throw error;
+          }
+
+          form.setValue("skillsGoodAt", data.skills_had || []);
+          form.setValue("skillsNeedHelpWith", data.skills_needed || []);
+          form.setValue("points", data.points || 0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [form, user]);
+
+  const addSkill = async (skillType: "skillsGoodAt" | "skillsNeedHelpWith") => {
     const newSkill =
       skillType === "skillsGoodAt" ? newSkillGoodAt : newSkillNeedHelpWith;
     if (newSkill.trim() !== "") {
-      form.setValue(skillType, [...form.getValues(skillType), newSkill.trim()]);
-      if (skillType === "skillsGoodAt") {
-        setNewSkillGoodAt("");
-      } else {
-        setNewSkillNeedHelpWith("");
+      const updatedSkills = [...form.getValues(skillType), newSkill.trim()];
+      form.setValue(skillType, updatedSkills);
+
+      try {
+        const { error } = await supabase
+          .from("user_profiles")
+          .update({
+            [skillType === "skillsGoodAt" ? "skills_had" : "skills_needed"]:
+              updatedSkills,
+          })
+          .eq("id", user.id);
+
+        if (error) {
+          throw error;
+        }
+
+        if (skillType === "skillsGoodAt") {
+          setNewSkillGoodAt("");
+        } else {
+          setNewSkillNeedHelpWith("");
+        }
+      } catch (error) {
+        console.error("Failed to update skills", error);
       }
     }
   };
 
-  const removeSkill = (
+  const removeSkill = async (
     skillType: "skillsGoodAt" | "skillsNeedHelpWith",
     skillToRemove: string
   ) => {
-    form.setValue(
-      skillType,
-      form.getValues(skillType).filter((skill) => skill !== skillToRemove)
-    );
+    const updatedSkills = form
+      .getValues(skillType)
+      .filter((skill) => skill !== skillToRemove);
+    form.setValue(skillType, updatedSkills);
+
+    try {
+      const { error } = await supabase
+        .from("user_profiles")
+        .update({
+          [skillType === "skillsGoodAt" ? "skills_had" : "skills_needed"]:
+            updatedSkills,
+        })
+        .eq("id", user.id);
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.error("Failed to update skills", error);
+    }
   };
+
+  function onSubmit(data: ProfileFormValues) {
+    console.log(data);
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <CardContent>
+      <h1 className="py-2">Your points: {form.getValues("points")}</h1>
+      <Separator className="mb-6" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="age"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Age</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(Number.parseInt(e.target.value, 10))
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bio</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Tell us about yourself" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Write a short bio about yourself. This will be visible to
-                  other users.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Separator />
           <FormField
             control={form.control}
             name="skillsGoodAt"
@@ -157,11 +184,10 @@ export function ProfileContent({ form, onSubmit }: ProfileContentProps) {
                       </Badge>
                     ))}
                     <div className="flex items-center">
-                      <Input
+                      <Dropdown
+                        enums={availableEnums} // Only enums not selected in either field
                         value={newSkillGoodAt}
-                        onChange={(e) => setNewSkillGoodAt(e.target.value)}
-                        placeholder="Add a skill"
-                        className="h-8 w-32"
+                        setter={setNewSkillGoodAt}
                       />
                       <Button
                         type="button"
@@ -182,6 +208,7 @@ export function ProfileContent({ form, onSubmit }: ProfileContentProps) {
               </FormItem>
             )}
           />
+          <Separator />
           <FormField
             control={form.control}
             name="skillsNeedHelpWith"
@@ -205,13 +232,10 @@ export function ProfileContent({ form, onSubmit }: ProfileContentProps) {
                       </Badge>
                     ))}
                     <div className="flex items-center">
-                      <Input
+                      <Dropdown
+                        enums={availableEnums} // Same filtered enums here
                         value={newSkillNeedHelpWith}
-                        onChange={(e) =>
-                          setNewSkillNeedHelpWith(e.target.value)
-                        }
-                        placeholder="Add a skill"
-                        className="h-8 w-32"
+                        setter={setNewSkillNeedHelpWith}
                       />
                       <Button
                         type="button"
@@ -232,54 +256,6 @@ export function ProfileContent({ form, onSubmit }: ProfileContentProps) {
               </FormItem>
             )}
           />
-          <Separator />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="isAvailableToHelp"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Available to Help
-                    </FormLabel>
-                    <FormDescription>
-                      Make yourself available to help others with your skills.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="isLookingForHelp"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Looking for Help
-                    </FormLabel>
-                    <FormDescription>
-                      Indicate if you're currently seeking help from others.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
-          <Button type="submit">Update Profile</Button>
         </form>
       </Form>
     </CardContent>

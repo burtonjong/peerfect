@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
 
   try {
     const { data: posts, error } = await supabase.from("posts").select("*");
-
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
