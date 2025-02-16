@@ -48,9 +48,9 @@ export default function BrowsePageClient({
   };
 
   return (
-    <main className="ml-64 flex-1 p-8 pb-16">
-      <div className="container mx-auto min-w-[750px] px-4">
-        <div className="mb-8 mt-12 flex items-center justify-between">
+    <main className="ml-64 flex-1 p-4 pb-16 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto min-w-[1000px] px-4">
+        <div className="mb-4 flex items-center justify-between">
           <h1 className="text-4xl font-bold">Browse Skills</h1>
           <div className="relative">
             <Button onClick={() => setDropdownOpen((prev) => !prev)}>
@@ -75,7 +75,7 @@ export default function BrowsePageClient({
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {sortedPosts.length > 0 ? (
             sortedPosts.map((post) => (
               <Post
@@ -90,7 +90,9 @@ export default function BrowsePageClient({
               />
             ))
           ) : (
-            <p>No posts available for this skill.</p>
+            <p className="dark:text-gray-40 pt-40 text-center text-gray-600">
+              No posts available for this skill.
+            </p>
           )}
         </div>
       </div>
