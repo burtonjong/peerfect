@@ -13,7 +13,7 @@ export const signUpAction = async (formData: FormData) => {
   const supabase = await createClient();
   const origin =
     process.env.NODE_ENV === "production"
-      ? "https://peerfect.vercel.app/"
+      ? "https://peerfect.vercel.app"
       : (await headers()).get("origin");
 
   if (!email || !password || !username) {
