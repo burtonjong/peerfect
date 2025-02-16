@@ -40,9 +40,10 @@ export default function RootLayout({
                   {children}
                 </div>
               </div>
-          </main>
-          <Footer className="relative z-10" />
-        </div>
+            </main>
+          </div>
+        </ThemeProvider>
+        <Footer className="relative z-10" />
       </body>
     </html>
   );
