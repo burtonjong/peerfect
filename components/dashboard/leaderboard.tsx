@@ -72,7 +72,7 @@ export default function Leaderboard({
   const topTenLeaders = leaderboard.slice(0, 10);
 
   return (
-    <>
+    <div className="animate-fade-in-up-3 transition-all">
       <h2 className="mb-3 font-brand text-2xl font-semibold">
         Peerfect Leaderboard
       </h2>
@@ -162,6 +162,6 @@ export default function Leaderboard({
           <p className="text-muted-foreground">No leaders to display yet.</p>
         )}
       </div>
-    </>
+    </div>
   );
 }

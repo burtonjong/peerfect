@@ -1,43 +1,64 @@
+import { ReactNode, Suspense, use } from "react";
+
 import { createClient } from "@/utils/supabase/server";
 import BrowsePageClient from "./browse-page-client";
 
-export default async function BrowsePage({ searchParams }: { searchParams: { modal?: string } }) {
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function BrowsePage({ searchParams }: Props) {
+  const { modal } = use(searchParams);
   const supabase = await createClient();
-  const userId = (await supabase.auth.getUser()).data.user?.id;
+  const user = await supabase.auth.getUser();
 
-  const resp = await searchParams;
-  const modal = resp.modal == "true";
+  const userId = user.data.user?.id || "";
 
-  const { data: posts, error } = await supabase.from("posts").select(`
-    *,
-    conversations ( id )
-  `);
+  let freakyBoolean = false;
+
+  modal === "true" ? (freakyBoolean = true) : (freakyBoolean = false);
+
+  const { data: posts, error } = await supabase
+    .from("posts")
+    .select(`*, conversations ( id )`);
 
   if (error) {
     console.error(error);
-    return <BrowsePageClient initialPosts={[]} userId="" modal={modal} />;
+    return (
+      <BrowsePageClient
+        initialPosts={[]}
+        userId={userId}
+        modal={freakyBoolean}
+      />
+    );
   }
 
-  const postsWithoutConversations = posts.filter(
-    (post) => post.conversations.length === 0
+  // Add proper type annotations for posts
+  const postsWithoutConversations = (posts || []).filter(
+    (post: any) => post.conversations?.length === 0
   );
 
   const postsThatAreNotUsers = postsWithoutConversations.filter(
-    (post) => post.author_id !== userId
+    (post: any) => post.author_id !== userId
   );
 
-  if (modal && postsThatAreNotUsers.length > 0) {
-    const sortedPosts = posts.sort((a, b) => {
+  if (freakyBoolean && postsThatAreNotUsers.length > 0) {
+    const sortedPosts = [...postsThatAreNotUsers].sort((a, b) => {
       const dateA = new Date(a.created_at || "").getTime();
       const dateB = new Date(b.created_at || "").getTime();
-      return dateB - dateA; 
+      return dateB - dateA;
     });
-
 
     postsThatAreNotUsers.unshift(sortedPosts[0]);
   }
 
   return (
-    <BrowsePageClient initialPosts={postsThatAreNotUsers} userId={userId!} modal={modal} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <BrowsePageClient
+        initialPosts={postsThatAreNotUsers}
+        userId={userId}
+        modal={freakyBoolean}
+      />
+    </Suspense>
   );
 }

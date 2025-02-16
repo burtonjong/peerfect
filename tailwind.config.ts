@@ -18,8 +18,14 @@ const config = {
       },
     },
     extend: {
+      extend: {
+        boxShadow: {
+          lg: "0 10px 15px rgba(0, 0, 0, 0.1)",
+          xl: "0 15px 25px rgba(0, 0, 0, 0.1)",
+        },
+      },
       fontFamily: {
-        sans: ["var(--geist-font)", "Inter", "system-ui"],
+        sans: ["var(--inter-font)", "Inter", "system-ui"],
         brand: ["var(--gabarito-font)"],
       },
       colors: {
@@ -86,10 +92,24 @@ const config = {
             height: "0",
           },
         },
+        "fade-in-up": {
+          from: {
+            opacity: "0",
+            transform: "translateY(8px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in-up": "fadeInUp 0.4s ease-out",
+        "fade-in-up-1": "fadeInUp 0.5s ease-out",
+        "fade-in-up-2": "fadeInUp 0.6 ease-out",
+        "fade-in-up-3": "fadeInUp 0.7s ease-out",
       },
     },
   },
