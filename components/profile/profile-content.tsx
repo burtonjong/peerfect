@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, X } from "lucide-react";
+import { Edit, Plus, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -22,12 +22,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/utils/supabase/client";
 
-import Dropdown from "./dropdown";
+import SpecialDropdown from "./specialdropdown";
 
 const profileFormSchema = z.object({
   skillsGoodAt: z.array(z.string()),
   skillsNeedHelpWith: z.array(z.string()),
   points: z.number(),
+  bio: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -36,6 +37,7 @@ const defaultValues: Partial<ProfileFormValues> = {
   skillsGoodAt: [],
   skillsNeedHelpWith: [],
   points: 0,
+  bio: "",
 };
 
 export function ProfileContent({ user, enums }: { user: any; enums: any }) {
@@ -56,9 +58,11 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
   const availableEnums = enums.filter(
     (skill: string) => !allSelectedSkills.includes(skill)
   );
+
   const [loading, setLoading] = useState(true);
   const [newSkillGoodAt, setNewSkillGoodAt] = useState("");
   const [newSkillNeedHelpWith, setNewSkillNeedHelpWith] = useState("");
+  const [isEditing, setIsEditing] = useState(false); // state for toggling between edit and view mode
 
   useEffect(() => {
     async function fetchData() {
@@ -66,7 +70,7 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
         if (user) {
           const { data, error } = await supabase
             .from("user_profiles")
-            .select("skills_had, skills_needed, points")
+            .select("skills_had, skills_needed, points, bio")
             .eq("id", user.id)
             .single();
 
@@ -77,6 +81,7 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
           form.setValue("skillsGoodAt", data.skills_had || []);
           form.setValue("skillsNeedHelpWith", data.skills_needed || []);
           form.setValue("points", data.points || 0);
+          form.setValue("bio", data.bio || "");
         }
       } catch (error) {
         console.error("Failed to fetch data", error);
@@ -94,28 +99,9 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
     if (newSkill.trim() !== "") {
       const updatedSkills = [...form.getValues(skillType), newSkill.trim()];
       form.setValue(skillType, updatedSkills);
-
-      try {
-        const { error } = await supabase
-          .from("user_profiles")
-          .update({
-            [skillType === "skillsGoodAt" ? "skills_had" : "skills_needed"]:
-              updatedSkills,
-          })
-          .eq("id", user.id);
-
-        if (error) {
-          throw error;
-        }
-
-        if (skillType === "skillsGoodAt") {
-          setNewSkillGoodAt("");
-        } else {
-          setNewSkillNeedHelpWith("");
-        }
-      } catch (error) {
-        console.error("Failed to update skills", error);
-      }
+      skillType === "skillsGoodAt"
+        ? setNewSkillGoodAt("")
+        : setNewSkillNeedHelpWith("");
     }
   };
 
@@ -127,27 +113,39 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
       .getValues(skillType)
       .filter((skill) => skill !== skillToRemove);
     form.setValue(skillType, updatedSkills);
+  };
 
+  const handleEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
+
+  const handleSave = async (data: ProfileFormValues) => {
     try {
+      console.log(data);
       const { error } = await supabase
         .from("user_profiles")
         .update({
-          [skillType === "skillsGoodAt" ? "skills_had" : "skills_needed"]:
-            updatedSkills,
+          skills_had: data.skillsGoodAt,
+          skills_needed: data.skillsNeedHelpWith,
+          points: data.points,
+          bio: data.bio,
         })
         .eq("id", user.id);
 
       if (error) {
         throw error;
       }
+      setIsEditing(false); // exit edit mode after saving
     } catch (error) {
-      console.error("Failed to update skills", error);
+      console.error("Failed to save data", error);
     }
   };
 
-  function onSubmit(data: ProfileFormValues) {
-    console.log(data);
-  }
+  const onSubmit = (data: ProfileFormValues) => {
+    if (isEditing) {
+      handleSave(data); // Save data if editing
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -174,30 +172,35 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
                         className="text-sm"
                       >
                         {skill}
-                        <button
-                          type="button"
-                          onClick={() => removeSkill("skillsGoodAt", skill)}
-                          className="ml-2 focus:outline-none"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
+                        {isEditing ? (
+                          <button
+                            type="button"
+                            onClick={() => removeSkill("skillsGoodAt", skill)}
+                            className="ml-2 focus:outline-none"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        ) : null}
                       </Badge>
                     ))}
                     <div className="flex items-center">
-                      <Dropdown
+                      <SpecialDropdown
+                        isEditing={isEditing}
                         enums={availableEnums} // Only enums not selected in either field
                         value={newSkillGoodAt}
                         setter={setNewSkillGoodAt}
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => addSkill("skillsGoodAt")}
-                        className="ml-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                      {isEditing ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => addSkill("skillsGoodAt")}
+                          className="ml-2"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      ) : null}
                     </div>
                   </div>
                 </FormControl>
@@ -232,20 +235,23 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
                       </Badge>
                     ))}
                     <div className="flex items-center">
-                      <Dropdown
+                      <SpecialDropdown
+                        isEditing={isEditing}
                         enums={availableEnums} // Same filtered enums here
                         value={newSkillNeedHelpWith}
                         setter={setNewSkillNeedHelpWith}
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => addSkill("skillsNeedHelpWith")}
-                        className="ml-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                      {isEditing ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => addSkill("skillsNeedHelpWith")}
+                          className="ml-2"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      ) : null}
                     </div>
                   </div>
                 </FormControl>
@@ -256,6 +262,50 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
               </FormItem>
             )}
           />
+          <Separator />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Your Bio</FormLabel>
+                <FormControl>
+                  <textarea
+                    {...field}
+                    className="w-full rounded border border-gray-300 p-2"
+                    placeholder="Tell us about yourself"
+                    disabled={!isEditing}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Write something about yourself.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Separator />
+
+          {isEditing ? (
+            <Button
+              type="button"
+              onClick={() => form.handleSubmit(onSubmit)()}
+              className="mt-4"
+              variant="outline"
+            >
+              Save
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={handleEdit}
+              className="mt-4"
+              variant="outline"
+            >
+              Edit
+              <Edit className="ml-2" />
+            </Button>
+          )}
         </form>
       </Form>
     </CardContent>
