@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 import Post from "@/components/browse/post";
-import Sidebar from "@/components/browse/sidebar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -35,17 +34,14 @@ export default function SkillPage() {
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
   const [sortedPosts, setSortedPosts] = useState<Post[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [skills, setSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const getUserId = async () => {
     const supabase = await createClient();
-
     const { data } = await supabase.auth.getUser();
     return data?.user?.id;
   };
-
-  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     getUserId().then((id) => setUserId(id as string));
@@ -66,20 +62,7 @@ export default function SkillPage() {
       }
     };
 
-    const fetchSkills = async () => {
-      try {
-        const res = await fetch(`${window.location.origin}/api/skills`);
-        const data = await res.json();
-        if (data && !data.error) {
-          setSkills(data);
-        }
-      } catch (error) {
-        console.error("Error fetching skills:", error);
-      }
-    };
-
     fetchPosts();
-    fetchSkills();
   }, []);
 
   useEffect(() => {
@@ -111,10 +94,9 @@ export default function SkillPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1">
-        <Sidebar skills={skills} />
-        <main className="ml-64 flex-1 bg-gradient-to-br from-gray-50 to-gray-100 p-8 pb-16 dark:from-gray-900 dark:to-gray-800">
-          <div className="container mx-auto px-4">
-            <div className="mb-4 mt-4 flex items-center justify-between">
+        <main className="ml-64 flex-1 p-4 pb-16 dark:from-gray-900 dark:to-gray-800">
+          <div className="container mx-auto min-w-[1000px] px-4">
+            <div className="mb-4 flex items-center justify-between">
               <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
                 Posts for {capitalizedSkill}
               </h1>
@@ -160,7 +142,7 @@ export default function SkillPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-600 dark:text-gray-400">
+              <p className="dark:text-gray-40 pt-40 text-center text-gray-600">
                 No posts available for this skill.
               </p>
             )}
