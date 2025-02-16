@@ -17,6 +17,17 @@ const gabarito = Gabarito({
   variable: "--gabarito-font",
 });
 
+export const metadata: Metadata = {
+  title: "Peerfect",
+  description: "Peerfect is the best way to get feedback on your work",
+  icons: [
+    {
+      rel: "icon",
+      sizes: "32x32",
+      url: "/favicon.ico",
+    },
+  ],
+};
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
