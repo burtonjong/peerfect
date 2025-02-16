@@ -10,7 +10,7 @@ export default function Header() {
       <div className="flex w-full max-w-7xl items-center justify-between p-3 px-8 text-sm">
         <div className="flex items-center gap-5 font-semibold">
           <Link
-            href={"/"}
+            href={"/dashboard"}
             className="flex flex-row items-center font-brand text-xl text-primary"
           >
             <Handshake size="24" strokeWidth={2} className="mr-1" />

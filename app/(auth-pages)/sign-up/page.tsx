@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React from "react";
 
 import { signUpAction } from "@/app/actions";
@@ -10,10 +9,9 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { SmtpMessage } from "../smtp-message";
+// import { SmtpMessage } from "../smtp-message";
 
 export default function Signup(props: { searchParams: Promise<Message> }) {
-  const router = useRouter();
   const [message, setMessage] = React.useState<Message | null>(null);
 
   React.useEffect(() => {
@@ -66,7 +64,7 @@ export default function Signup(props: { searchParams: Promise<Message> }) {
         </div>
       </form>
       {message && <FormMessage message={message} />}
-      <SmtpMessage />
+      {/* <SmtpMessage /> */}
     </>
   );
 }
