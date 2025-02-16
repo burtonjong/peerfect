@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Search, Send } from "lucide-react";
 
 import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 
 export default function RecentChats({
   conversations,
@@ -15,9 +16,10 @@ export default function RecentChats({
 }) {
   return (
     <>
-      <h2 className="mb-4 font-brand text-2xl font-semibold">
+      <h2 className="mb-3 font-brand text-2xl font-semibold">
         Your Recent Chats
       </h2>
+      <Separator className="mb-4" />
       <div className="mb-12 space-y-4">
         {conversations && conversations.length > 0 ? (
           conversations.map((conversation) => {
