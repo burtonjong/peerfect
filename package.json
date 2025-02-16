@@ -27,7 +27,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.54.2",
-    "shadcn-ui": "^0.9.4"
+    "shadcn-ui": "^0.9.4",
     "shadcn": "^2.3.0"
   },
   "devDependencies": {
