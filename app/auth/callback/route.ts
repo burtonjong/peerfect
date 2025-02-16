@@ -35,7 +35,14 @@ export async function GET(request: Request) {
         user.email_confirmed_at !== ""
       ) {
         // Redirect to onboarding if email is verified
-        return NextResponse.redirect(`${origin}/onboarding`);
+
+        let { data: enums } = await supabase.rpc("get_types", {
+          enum_type: "skills_enum",
+        });
+
+        return NextResponse.redirect(
+          `${origin}/dashboard/onboarding?enums=${encodeURIComponent(enums)}?userId=${user.id}`
+        );
       } else {
         // Inform the user to verify their email
         return NextResponse.json({
