@@ -62,8 +62,11 @@ export default function Signup(props: { searchParams: Promise<Message> }) {
             Sign up
           </SubmitButton>
         </div>
+        <div className="mt-4">
+            {message && <FormMessage message={message} />}
+
+        </div>
       </form>
-      {message && <FormMessage message={message} />}
       {/* <SmtpMessage /> */}
     </>
   );
