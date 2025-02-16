@@ -41,7 +41,7 @@ export async function GET(request: Request) {
         });
 
         return NextResponse.redirect(
-          `${origin}/dashboard/onboarding?enums=${encodeURIComponent(enums)}?userId=${user.id}`
+          `${origin}/dashboard/onboarding?enums=${encodeURIComponent(enums)}&userId=${encodeURIComponent(user.id)}`
         );
       } else {
         // Inform the user to verify their email

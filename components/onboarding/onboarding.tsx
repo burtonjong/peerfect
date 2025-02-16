@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,17 +16,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { createClient } from "@/utils/supabase/client";
 
-export default function Onboarding({
-  enums,
-  userId,
-}: {
-  enums: string[];
-  userId: string;
-}) {
-  if (!enums) {
-    enums = [];
-  }
+export default function Onboarding() {
+  const supabase = createClient();
+
+  const searchParams = useSearchParams();
+
+  const enums = searchParams.get("enums")?.split(",") || [];
+  const userId = searchParams.get("userId") || "";
+
   const [step, setStep] = useState(1);
   const [skillsGoodAt, setSkillsGoodAt] = useState<string[]>([]);
   const [skillsNeedHelpWith, setSkillsNeedHelpWith] = useState<string[]>([]);
@@ -55,13 +55,28 @@ export default function Onboarding({
       !skillsGoodAt.includes(skill) && !skillsNeedHelpWith.includes(skill)
   );
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 1 && skillsGoodAt.length > 0) {
       setStep(2);
     } else if (step === 2) {
       console.log("Skills you're good at:", skillsGoodAt);
       console.log("Skills you need help with:", skillsNeedHelpWith);
-      // Here you would typically submit the data to your backend
+
+      try {
+        const { error } = await supabase
+          .from("user_profiles")
+          .update({
+            skills_good_at: skillsGoodAt,
+            skills_need_help_with: skillsNeedHelpWith,
+          })
+          .eq("id", userId);
+
+        if (error) {
+          throw error;
+        }
+      } catch (error) {
+        console.error("Failed to update skills", error);
+      }
     }
   };
 
