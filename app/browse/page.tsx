@@ -1,7 +1,9 @@
 "use client";
+
+// Import the Post component
 import { useEffect, useState } from "react";
-import { Tables } from "@/database.types";
-import Post from "@/components/browse/post"; // Import the Post component
+
+import Post from "@/components/browse/post";
 
 type Post = {
   id: string;
@@ -43,7 +45,9 @@ export default function BrowsePage() {
         if (!a.created_at || !b.created_at) return 0; // Handle invalid or missing dates
         const dateA = new Date(a.created_at);
         const dateB = new Date(b.created_at);
-        return sortOrder === "desc" ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
+        return sortOrder === "desc"
+          ? dateB.getTime() - dateA.getTime()
+          : dateA.getTime() - dateB.getTime();
       });
       setSortedPosts(sorted);
     }
@@ -55,27 +59,27 @@ export default function BrowsePage() {
   };
 
   return (
-    <div className="container min-w-[750px] mx-auto px-4">
-      <div className="flex justify-between items-center mb-8 mt-12">
+    <div className="container mx-auto min-w-[750px] px-4">
+      <div className="mb-8 mt-12 flex items-center justify-between">
         <h1 className="text-4xl font-bold">Browse Skills</h1>
         <div className="relative">
           <button
             onClick={() => setDropdownOpen((prev) => !prev)}
-            className="px-3 py-1.5 text-sm font-medium text-white border border-transparent rounded-md bg-[hsl(220,50%,20%)] hover:bg-[hsl(220,50%,25%)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            className="rounded-md border border-transparent bg-[hsl(220,50%,20%)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[hsl(220,50%,25%)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             Sort by Date
           </button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-[hsl(220,50%,20%)] border border-transparent rounded-md shadow-lg">
+            <div className="absolute right-0 mt-2 w-40 rounded-md border border-transparent bg-[hsl(220,50%,20%)] shadow-lg">
               <div
                 onClick={() => handleSortChange("desc")}
-                className="px-4 py-2 text-sm text-white cursor-pointer hover:bg-[hsl(220,50%,25%)]"
+                className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
               >
                 Newest First
               </div>
               <div
                 onClick={() => handleSortChange("asc")}
-                className="px-4 py-2 text-sm text-white cursor-pointer hover:bg-[hsl(220,50%,25%)]"
+                className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
               >
                 Oldest First
               </div>
