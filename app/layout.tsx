@@ -10,7 +10,12 @@ import Header from "@/components/header";
 
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--inter-font" });
+
+const gabarito = Gabarito({
+  subsets: ["latin"],
+  variable: "--gabarito-font",
+});
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -23,7 +28,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body
+        className={`${inter.variable} ${gabarito.variable} ${inter.className}`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -42,8 +49,8 @@ export default function RootLayout({
               </div>
             </main>
           </div>
+          <Footer className="relative z-10" />
         </ThemeProvider>
-        <Footer className="relative z-10" />
       </body>
     </html>
   );
