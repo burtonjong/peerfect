@@ -61,9 +61,13 @@ export default async function HeaderAuth() {
       <nav className="hidden gap-4 md:flex">
         {[
           { href: "/dashboard", label: "Dashboard", icon: Home },
-          { href: "/browse", label: "Browse", icon: Search },
-          { href: "/chat", label: "Chat", icon: MessageCircle },
-          { href: "/createPost", label: "Create Post", icon: PenTool },
+          { href: "/dashboard/browse", label: "Browse", icon: Search },
+          { href: "/dashboard/chat", label: "Chat", icon: MessageCircle },
+          {
+            href: "/dashboard/createPost",
+            label: "Create Post",
+            icon: PenTool,
+          },
         ].map((item) => (
           <Link
             key={item.href}
@@ -95,7 +99,7 @@ export default async function HeaderAuth() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/profile" className="flex items-center gap-2">
+            <Link href="/dashboard/profile" className="flex items-center gap-2">
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </Link>

@@ -9,7 +9,7 @@ function Sidebar({ skills }: SidebarProps) {
     { name: "All Skills", href: "/browse" },
     ...skills.map((skill) => ({
       name: skill,
-      href: `/browse/${skill.toLowerCase()}`,
+      href: `dashboard/browse/${skill.toLowerCase()}`,
     })),
   ];
 
