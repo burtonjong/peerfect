@@ -1,9 +1,31 @@
 import Link from "next/link";
 
-import { Plus, Search, Send, SchoolIcon as Teach } from "lucide-react";
+import { Plus, SchoolIcon as Teach } from "lucide-react";
 
+import Leaderboard from "@/components/dashboard/leaderboard";
+import RecentChats from "@/components/dashboard/recentChats";
+import YourPosts from "@/components/dashboard/yourPosts";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+
+const formatDateToLocaleString = (date: string) => {
+  const postDate = new Date(date);
+  const now = new Date();
+  const diffInMs = now.getTime() - postDate.getTime();
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  if (diffInDays > 7) {
+    return postDate.toLocaleString();
+  } else if (diffInDays > 0) {
+    return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+  } else if (diffInHours > 0) {
+    return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
+  } else {
+    return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
+  }
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -37,8 +59,22 @@ export default async function DashboardPage() {
     return data;
   };
 
+  const getLeaderboard = async () => {
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .order("points", { ascending: false });
+
+    if (error) {
+      console.error(error);
+    }
+
+    return data;
+  };
+
   const usersPosts = await getUsersPosts();
   const conversations = await getConversations();
+  const leaderboard = await getLeaderboard();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -70,98 +106,17 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <h2 className="mb-4 pb-2 font-brand text-2xl font-semibold">
-        Your Posts
-      </h2>
-      <div className="mb-12 space-y-4">
-        {usersPosts && usersPosts.length > 0 ? (
-          usersPosts.map((post) => (
-            <div key={post.id} className="rounded-lg border p-4">
-              <h3 className="text-xl font-semibold">{post.title}</h3>
-              <p className="text-gray-600">
-                Posted {formatDateToLocaleString(post.created_at)}
-              </p>
-              <div className="space-x-2">
-                {conversations?.some(
-                  (conversation) => conversation.post_id.id === post.id
-                ) ? (
-                  <>
-                    <Link href={`/dashboard/${post.id}/chat`} passHref>
-                      <Button className="mt-4">
-                        <Send className="mr-2 h-4 w-4" /> Chat
-                      </Button>
-                    </Link>
-                    <Button variant="outline" className="mt-4">
-                      <Search className="mr-2 h-4 w-4" /> View Listing
-                    </Button>
-                  </>
-                ) : (
-                  <Button className="mt-4">
-                    <Search className="mr-2 h-4 w-4" /> View Listing
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-600">You have not created any posts yet.</p>
-        )}
-      </div>
-
-      <h2 className="mb-4 font-brand text-2xl font-semibold">
-        Your Recent Chats
-      </h2>
-      <div className="space-y-4">
-        {conversations?.map((conversation) => {
-          const otherUser =
-            conversation.poster_id.id === userId
-              ? conversation.responder_id
-              : conversation.poster_id;
-          return (
-            <div key={conversation.id} className="rounded-lg border p-4">
-              <span className="text-sm text-muted-foreground">
-                {formatDateToLocaleString(conversation.created_at)}
-              </span>
-              <h3 className="text-xl font-semibold">
-                {conversation.post_id.title}
-              </h3>
-              <p className="text-gray-600">With {otherUser.username}</p>
-              <div className="space-x-2">
-                <Link
-                  href={`/dashboard/${conversation.post_id.id}/chat`}
-                  passHref
-                >
-                  <Button className="mt-4">
-                    <Send className="mr-2 h-4 w-4" /> Chat
-                  </Button>
-                </Link>
-                <Button variant="outline" className="mt-4">
-                  <Search className="mr-2 h-4 w-4" /> View Listing
-                </Button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <YourPosts
+        conversations={conversations ?? []}
+        usersPosts={usersPosts ?? []}
+        formatDateToLocaleString={formatDateToLocaleString}
+      />
+      <RecentChats
+        conversations={conversations ?? []}
+        userId={userId ?? ""}
+        formatDateToLocaleString={formatDateToLocaleString}
+      />
+      <Leaderboard leaderboard={leaderboard ?? []} />
     </div>
   );
 }
-
-const formatDateToLocaleString = (date: string) => {
-  const postDate = new Date(date);
-  const now = new Date();
-  const diffInMs = now.getTime() - postDate.getTime();
-  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-  if (diffInDays > 7) {
-    return postDate.toLocaleString();
-  } else if (diffInDays > 0) {
-    return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
-  } else if (diffInHours > 0) {
-    return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
-  } else {
-    return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
-  }
-};
