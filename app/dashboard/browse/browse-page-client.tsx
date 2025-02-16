@@ -91,7 +91,7 @@ export default function BrowsePageClient({
         </div>
 
         {sortedPosts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {sortedPosts.map((post) => (
               <Post
                 key={post.id}

@@ -130,7 +130,7 @@ export default function SkillPage() {
               <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900 dark:border-gray-100"></div>
             </div>
           ) : sortedPosts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {sortedPosts.map((post) => (
                 <Post
                   key={post.id}
