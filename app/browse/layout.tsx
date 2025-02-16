@@ -1,41 +1,35 @@
-import Link from "next/link";
-import type React from "react";
+'use client';
 
-import { Bell, Search, User } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { SidebarLink } from "@/components/ui/sidebar-link";
+import { Button } from "@/components/ui/button";
+import { Bell, Search, User } from "lucide-react";
+import Sidebar from "@/components/browse/sidebar";  // Import the Sidebar component
+import Link from "next/link";
 
 export default function BrowseLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const sidebarLinks = [
-    { name: "All Classes", href: "/browse" },
-    { name: "Creative Career", href: "/browse/creative" },
-    { name: "Creativity & Inspiration", href: "/browse/inspiration" },
-    { name: "Design", href: "/browse/design" },
-    { name: "Art & Illustration", href: "/browse/art" },
-    { name: "Film & Video", href: "/browse/video" },
-    { name: "Photography", href: "/browse/photography" },
-    { name: "Photography Career & Industry", href: "/browse/photo-career" },
-    {
-      name: "Photography Techniques & Fundamentals",
-      href: "/browse/photo-techniques",
-    },
-    { name: "Photo Post-Production", href: "/browse/photo-post" },
-    { name: "Photographic Styles", href: "/browse/photo-styles" },
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "AI for Photography", href: "/browse/ai-photo" },
-  ];
+  const [skills, setSkills] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+        const res = await fetch(`${window.location.origin}/api/skills`);
+        const data = await res.json();
+      if (data && !data.error) {
+        setSkills(data);
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Top Navigation Bar */}
-      <header className="fixed left-0 top-0 z-10 w-full border-b bg-[#0A1A2B] text-white">
-        <div className="flex h-16 w-full items-center gap-4 px-4">
+    <div className="min-h-screen flex flex-col">
+      <header className="border-b bg-[#0A1A2B] text-white w-full fixed top-0 left-0 z-10">
+        <div className="w-full px-4 h-16 flex items-center gap-4">
           <Link href="/" className="text-2xl font-bold">
             Peerfect
           </Link>
@@ -66,18 +60,10 @@ export default function BrowseLayout({
         </div>
       </header>
 
-      <div className="flex flex-1 pt-16">
-        {/* Left Sidebar */}
-        <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 space-y-4 border-r p-6">
-          <nav className="space-y-1">
-            {sidebarLinks.map((link) => (
-              <SidebarLink key={link.href} name={link.name} href={link.href} />
-            ))}
-          </nav>
-        </aside>
+      <div className="flex-1 flex pt-16">
+        <Sidebar skills={skills} /> {/* Use Sidebar component */}
 
-        {/* Main Content */}
-        <main className="ml-64 flex-1 p-8 pb-16">{children}</main>
+        <main className="flex-1 p-8 ml-64 pb-16">{children}</main>
       </div>
     </div>
   );
