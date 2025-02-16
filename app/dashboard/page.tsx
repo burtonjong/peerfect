@@ -88,7 +88,7 @@ export default async function DashboardPage() {
             Learn a New Skill
           </h3>
           <p className="text-gray-600">Discover new skills taught by peers</p>
-          <Link href="/dashboard/browse">
+          <Link href="/dashboard/createPost">
             <Button className="mt-4 w-full">
               <Plus className="mr-2 h-4 w-4" /> Create Listing
             </Button>
@@ -100,9 +100,11 @@ export default async function DashboardPage() {
             Offer Your Expertise
           </h3>
           <p className="text-gray-600">Share your skills with others</p>
-          <Button className="mt-4 w-full">
-            <Teach className="mr-2 h-4 w-4" /> Browse Listings
-          </Button>
+          <Link href="/dashboard/browse">
+            <Button className="mt-4 w-full">
+              <Teach className="mr-2 h-4 w-4" /> Browse Listings
+            </Button>
+          </Link>
         </div>
       </div>
 
