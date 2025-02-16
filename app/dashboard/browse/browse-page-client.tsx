@@ -26,6 +26,7 @@ type Post = {
 type BrowsePageClientProps = {
   initialPosts: Post[];
   userId: string;
+  modal?: boolean;
 };
 
 export default function BrowsePageClient({
