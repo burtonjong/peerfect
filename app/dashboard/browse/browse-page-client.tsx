@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from "react";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
+
 import Post from "@/components/browse/post";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 
 type Post = {
   id: string;
@@ -50,34 +59,38 @@ export default function BrowsePageClient({
   return (
     <main className="ml-64 flex-1 p-4 pb-16 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto min-w-[1000px] px-4">
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-4xl font-bold">Browse Skills</h1>
-          <div className="relative">
-            <Button onClick={() => setDropdownOpen((prev) => !prev)}>
-              Sort by Date
-            </Button>
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 rounded-md border border-transparent bg-[hsl(220,50%,20%)] shadow-lg">
-                <div
-                  onClick={() => handleSortChange("desc")}
-                  className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
-                >
+        <div className="mb-4 mt-2 flex flex-col items-center justify-between">
+          <div className="mb-3 flex w-full flex-row justify-between">
+            <h1 className="font-brand text-4xl font-bold text-primary">
+              Browse Skills
+            </h1>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  Sort by Date
+                  {sortOrder === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronUp className="h-4 w-4" />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleSortChange("desc")}>
                   Newest First
-                </div>
-                <div
-                  onClick={() => handleSortChange("asc")}
-                  className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
-                >
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSortChange("asc")}>
                   Oldest First
-                </div>
-              </div>
-            )}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+          <Separator />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {sortedPosts.length > 0 ? (
-            sortedPosts.map((post) => (
+        {sortedPosts.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {sortedPosts.map((post) => (
               <Post
                 key={post.id}
                 id={post.id}
@@ -86,15 +99,15 @@ export default function BrowsePageClient({
                 skill={post.skill}
                 created_at={post.created_at}
                 poster_id={post.author_id}
-                user_id={userId}
+                user_id={userId as string}
               />
-            ))
-          ) : (
-            <p className="dark:text-gray-40 pt-40 text-center text-gray-600">
-              No posts available for this skill.
-            </p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="pt-40 text-center text-muted-foreground">
+            No posts available for this skill.
+          </p>
+        )}
       </div>
     </main>
   );

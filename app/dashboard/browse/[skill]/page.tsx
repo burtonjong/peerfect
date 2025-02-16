@@ -93,69 +93,64 @@ export default function SkillPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex flex-1">
-        <main className="ml-64 flex-1 p-4 pb-16 dark:from-gray-900 dark:to-gray-800">
-          <div className="container mx-auto min-w-[1000px] px-4">
-            <div className="mb-4 mt-2 flex flex-col items-center justify-between">
-              <div className="mb-3 flex w-full gap-2">
-                <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
-                  Posts for {capitalizedSkill}
-                </h1>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      Sort by Date
-                      {sortOrder === "desc" ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronUp className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleSortChange("desc")}>
-                      Newest First
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSortChange("asc")}>
-                      Oldest First
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <Separator />
+    <div className="flex flex-1">
+      <main className="ml-64 flex-1 p-4 pb-16 dark:from-gray-900 dark:to-gray-800">
+        <div className="container mx-auto min-w-[1000px] px-4">
+          <div className="mb-4 mt-2 flex flex-col items-center justify-between">
+            <div className="mb-3 flex w-full flex-row justify-between">
+              <h1 className="font-brand text-4xl font-bold text-primary">
+                Posts for {capitalizedSkill}
+              </h1>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    Sort by Date
+                    {sortOrder === "desc" ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronUp className="h-4 w-4" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => handleSortChange("desc")}>
+                    Newest First
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSortChange("asc")}>
+                    Oldest First
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-
-            {loading ? (
-              <div className="flex h-64 items-center justify-center">
-                <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900 dark:border-gray-100"></div>
-              </div>
-            ) : sortedPosts.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {sortedPosts.map((post) => (
-                  <Post
-                    key={post.id}
-                    id={post.id}
-                    title={post.title}
-                    body={post.body}
-                    skill={post.skill}
-                    created_at={post.created_at}
-                    poster_id={post.author_id}
-                    user_id={userId as string}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="dark:text-gray-40 pt-40 text-center text-gray-600">
-                No posts available for this skill.
-              </p>
-            )}
+            <Separator />
           </div>
-        </main>
-      </div>
+
+          {loading ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900 dark:border-gray-100"></div>
+            </div>
+          ) : sortedPosts.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {sortedPosts.map((post) => (
+                <Post
+                  key={post.id}
+                  id={post.id}
+                  title={post.title}
+                  body={post.body}
+                  skill={post.skill}
+                  created_at={post.created_at}
+                  poster_id={post.author_id}
+                  user_id={userId as string}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="pt-40 text-center text-muted-foreground">
+              No posts available for this skill.
+            </p>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
