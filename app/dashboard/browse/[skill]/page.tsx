@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { createClient } from "@/utils/supabase/client";
 
 type Post = {
   id: string;
@@ -35,6 +36,19 @@ export default function SkillPage() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [skills, setSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const getUserId = async () => {
+    const supabase = await createClient();
+
+    const { data } = await supabase.auth.getUser();
+    return data?.user?.id;
+  };
+
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    getUserId().then((id) => setUserId(id as string));
+  }, []);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -125,7 +139,8 @@ export default function SkillPage() {
                     body={post.body}
                     skill={post.skill}
                     created_at={post.created_at}
-                    author_id={post.author_id}
+                    poster_id={post.author_id}
+                    user_id={userId as string}
                   />
                 ))}
               </div>

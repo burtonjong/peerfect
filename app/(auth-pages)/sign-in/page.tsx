@@ -1,22 +1,12 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { signInAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/server";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
-  const supabase = await createClient();
-
-  const user = await supabase.auth.getUser();
-
-  if (user) {
-    redirect("/dashboard");
-  }
-
   const searchParams = await props.searchParams;
   return (
     <form className="mx-auto mt-12 flex min-w-96 max-w-96 flex-col">

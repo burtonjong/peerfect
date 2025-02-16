@@ -1,8 +1,8 @@
+import { Suspense } from "react";
+
 import { createClient } from "@/utils/supabase/server";
 
 import ChatPage from "./chat-page-client";
-
-const conversationId = "b09c01a4-07fa-440d-87b8-e35c051f2621"; // change this later
 
 export default async function ChatPageServer({
   params,
@@ -30,13 +30,33 @@ export default async function ChatPageServer({
     return data;
   };
 
+  const getConversationId = async (postId: string, userId: string) => {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("post_id", postId);
+    if (error) {
+      throw error;
+    }
+    return data[0].id;
+  };
+
   const userId = (await getUser()).user.id;
 
   const postId = (await params).postId;
 
   const post = await getPost(postId);
 
+  const conversationId = await getConversationId(postId, userId);
+
   return (
-    <ChatPage userId={userId} post={post[0]} conversationId={conversationId} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChatPage
+        userId={userId}
+        post={post[0]}
+        conversationId={conversationId}
+      />
+    </Suspense>
   );
 }

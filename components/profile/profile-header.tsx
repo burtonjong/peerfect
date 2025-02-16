@@ -12,6 +12,7 @@ export function ProfileHeader({ user }: { user: any }) {
   const [userData, setUserData] = useState<{
     username: string;
     email: string;
+    points: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +22,7 @@ export function ProfileHeader({ user }: { user: any }) {
         if (user) {
           const { data: userProfile, error } = await supabase
             .from("user_profiles")
-            .select("username, email")
+            .select("username, email, points")
             .eq("id", user.id)
             .single();
 
@@ -32,6 +33,7 @@ export function ProfileHeader({ user }: { user: any }) {
           setUserData({
             username: userProfile.username,
             email: userProfile.email,
+            points: userProfile.points,
           });
         }
       } catch (error) {
@@ -45,7 +47,11 @@ export function ProfileHeader({ user }: { user: any }) {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex min-h-72 flex-row items-center justify-center space-y-4">
+        <span className="text-2xl">Loading...</span>
+      </div>
+    );
   }
 
   if (!userData) {
@@ -54,17 +60,27 @@ export function ProfileHeader({ user }: { user: any }) {
 
   return (
     <CardHeader>
-      <div className="flex items-center space-x-4">
-        <Avatar className="h-20 w-20">
-          <AvatarImage
-            src={`https://api.dicebear.com/6.x/initials/svg?seed=${userData.username}`}
-            alt="Profile picture"
-          />
-          <AvatarFallback>{userData.username[0].toUpperCase()}</AvatarFallback>
-        </Avatar>
-        <div>
-          <CardTitle className="pb-1">{userData.username}</CardTitle>
-          <CardDescription>{userData.email}</CardDescription>
+      <div className="flex flex-row justify-between space-y-4">
+        <div className="flex items-center space-x-4">
+          <Avatar className="h-20 w-20">
+            <AvatarImage
+              src={`https://api.dicebear.com/6.x/initials/svg?seed=${userData.username}`}
+              alt="Profile picture"
+            />
+            <AvatarFallback>
+              {userData.username[0].toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <CardTitle className="pb-1">{userData.username}</CardTitle>
+            <CardDescription>{userData.email}</CardDescription>
+          </div>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <CardDescription className="text-xl">Your points: </CardDescription>
+          <CardTitle className="pb-1 text-2xl text-primary">
+            {userData.points}
+          </CardTitle>
         </div>
       </div>
     </CardHeader>

@@ -2,14 +2,16 @@
 
 import * as React from "react";
 
-export default function Dropdown({
+export default function SpecialDropdown({
   value,
   enums,
   setter,
+  isEditing,
 }: {
   value: string;
   enums: string[];
   setter: React.Dispatch<React.SetStateAction<string>>;
+  isEditing: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
   const [filter, setFilter] = React.useState("");
@@ -21,7 +23,9 @@ export default function Dropdown({
   return (
     <div className="relative w-[140px]">
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          isEditing ? setOpen(!open) : null;
+        }}
         className="flex w-full items-center justify-between rounded-xl border p-2 text-sm"
         type="button"
       >

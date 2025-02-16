@@ -1,8 +1,9 @@
-"use client";
+import { createClient } from "@/utils/supabase/server";
 
-import { useEffect, useState } from "react";
+import BrowsePageClient from "./browse-page-client";
 
-import { ChevronDown, ChevronUp } from "lucide-react";
+export default async function BrowsePage() {
+  const supabase = await createClient();
 
 import Post from "@/components/browse/post";
 import Sidebar from "@/components/browse/sidebar";
@@ -14,14 +15,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type Post = {
-  id: string;
-  title: string;
-  body: string;
-  skill: string;
-  author_id: string;
-  created_at: string | null;
-};
+  const userId = (await supabase.auth.getUser()).data.user?.id;
+
+
+  const { data: posts, error } = await supabase.from("posts").select(`
+      *,
+      conversations ( id )
+    `);
+
 
 export default function BrowsePage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -29,7 +30,6 @@ export default function BrowsePage() {
   const [sortedPosts, setSortedPosts] = useState<Post[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [skills, setSkills] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -62,11 +62,22 @@ export default function BrowsePage() {
     }
   }, [posts, sortOrder]);
 
-  const handleSortChange = (order: "asc" | "desc") => {
-    setSortOrder(order);
-  };
+  if (error) {
+    console.error(error);
+    return <BrowsePageClient initialPosts={[]} userId="" />;
+  }
+
+  const postsWithoutConversations = posts.filter(
+    (post) => post.conversations.length === 0
+  );
+
+
+  const postsThatAreNotUsers = postsWithoutConversations.filter(
+    (post) => post.author_id !== userId
+  );
 
   return (
+
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1">
         <main className="ml-64 min-w-[1000px] flex-1 rounded-md bg-gradient-to-br from-gray-50 to-gray-100 p-6 pb-16 dark:from-gray-900 dark:to-gray-800">
@@ -125,5 +136,6 @@ export default function BrowsePage() {
         </main>
       </div>
     </div>
+    <BrowsePageClient initialPosts={postsThatAreNotUsers} userId={userId!} />
   );
 }
