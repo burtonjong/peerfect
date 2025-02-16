@@ -11,7 +11,7 @@ const skill = request.nextUrl.searchParams.get('skill');
       let query = supabase.from("posts").select("*");
       
       if (skill) {
-        query = query.eq('skill', skill);  // Filter posts by skill
+        query = query.eq('skill', skill); 
       }
   
       const { data: posts, error } = await query;

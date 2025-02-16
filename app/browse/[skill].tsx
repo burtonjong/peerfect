@@ -1,15 +1,14 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Tables } from '@/database.types'; // Update with the correct path
+import { Tables } from '@/database.types'; 
 
 export default function SkillPage() {
   const router = useRouter();
-  const { skill } = router.query;  // Get the dynamic skill from the URL
-  const [posts, setPosts] = useState<Tables<'posts'>[]>([]); // Set the correct type for posts
+  const { skill } = router.query;  
+  const [posts, setPosts] = useState<Tables<'posts'>[]>([]); 
 
   useEffect(() => {
     if (skill) {
-      // Fetch posts related to this skill from the API
       const fetchPosts = async () => {
         const res = await fetch(`/api/posts?skill=${skill}`);
         const data = await res.json();
