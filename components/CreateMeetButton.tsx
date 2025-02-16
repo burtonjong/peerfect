@@ -1,6 +1,6 @@
 "use client";
 
-import { Teach } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const CreateMeetButton = () => {
@@ -17,7 +17,7 @@ const CreateMeetButton = () => {
 
   return (
     <Button className="mt-4 w-full" onClick={createMeet}>
-      <Teach className="mr-2 h-4 w-4" /> Create Google Meet
+      <GraduationCap className="mr-2 h-4 w-4" /> Create Google Meet
     </Button>
   );
 };
