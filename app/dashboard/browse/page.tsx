@@ -5,14 +5,6 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 import Post from "@/components/browse/post";
-import Sidebar from "@/components/browse/sidebar";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 type Post = {
   id: string;
@@ -28,7 +20,7 @@ export default function BrowsePage() {
   const [loading, setLoading] = useState(true);
   const [sortedPosts, setSortedPosts] = useState<Post[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [skills, setSkills] = useState<string[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -45,20 +37,7 @@ export default function BrowsePage() {
       }
     };
 
-    const fetchSkills = async () => {
-      try {
-        const res = await fetch(`${window.location.origin}/api/skills`);
-        const data = await res.json();
-        if (data && !data.error) {
-          setSkills(data);
-        }
-      } catch (error) {
-        console.error("Error fetching skills:", error);
-      }
-    };
-
     fetchPosts();
-    fetchSkills();
   }, []);
 
   useEffect(() => {
@@ -80,63 +59,56 @@ export default function BrowsePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex flex-1 pt-4">
-        <Sidebar skills={skills} />
-        <main className="ml-64 flex-1 bg-gradient-to-br p-8 pb-16 dark:from-gray-900 dark:to-gray-800">
-          <div className="container mx-auto px-4 py-4">
-            <div className="mb-4 flex items-center justify-between">
-              <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
-                Browse Skills
-              </h1>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    Sort by Date
-                    {sortOrder === "desc" ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronUp className="h-4 w-4" />
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => handleSortChange("desc")}>
-                    Newest First
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleSortChange("asc")}>
-                    Oldest First
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {loading ? (
-              <div className="flex h-64 items-center justify-center">
-                <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900 dark:border-gray-100"></div>
+    <main className="ml-64 flex-1 p-8 pb-16">
+      <div className="container mx-auto min-w-[750px] px-4">
+        <div className="mb-8 mt-12 flex items-center justify-between">
+          <h1 className="text-4xl font-bold">Browse Skills</h1>
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen((prev) => !prev)}
+              className="rounded-md border border-transparent bg-[hsl(220,50%,20%)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[hsl(220,50%,25%)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Sort by Date
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 rounded-md border border-transparent bg-[hsl(220,50%,20%)] shadow-lg">
+                <div
+                  onClick={() => handleSortChange("desc")}
+                  className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
+                >
+                  Newest First
+                </div>
+                <div
+                  onClick={() => handleSortChange("asc")}
+                  className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
+                >
+                  Oldest First
+                </div>
               </div>
-            ) : sortedPosts.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {sortedPosts.map((post) => (
-                  <Post
-                    key={post.id}
-                    id={post.id}
-                    title={post.title}
-                    body={post.body}
-                    skill={post.skill}
-                    created_at={post.created_at}
-                    author_id={post.author_id}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="text-center text-gray-600 dark:text-gray-400">
-                No posts available for this skill.
-              </p>
             )}
           </div>
-        </main>
+        </div>
+
+        <div className="space-y-6">
+          {loading ? (
+            <p>Loading posts...</p>
+          ) : sortedPosts.length > 0 ? (
+            sortedPosts.map((post) => (
+              <Post
+                key={post.id}
+                id={post.id}
+                title={post.title}
+                body={post.body}
+                skill={post.skill}
+                created_at={post.created_at}
+                author_id={post.author_id}
+              />
+            ))
+          ) : (
+            <p>No posts available for this skill.</p>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

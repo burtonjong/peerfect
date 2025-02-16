@@ -18,7 +18,7 @@ export default function ChatPage({
   post: {
     title: string;
     body: string;
-    skillTag: string;
+    skilltag: string;
     user: {
       name: string;
       id: string;
@@ -42,6 +42,8 @@ export default function ChatPage({
   const supabase = createClient();
 
   const scrollToBottomRef = useRef<HTMLDivElement>(null);
+
+  console.log(post);
 
   useEffect(() => {
     // Fetch existing messages
@@ -185,7 +187,7 @@ export default function ChatPage({
             {post.body}
             <br />
             <span className="text-sm font-semibold text-gray-600">
-              Skill: {post.skillTag}
+              Skill: {post.skilltag}
             </span>
           </p>
         </div>
