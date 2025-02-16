@@ -8,21 +8,21 @@ export default function Body2() {
           Why Choose Peerfect?
         </h2>
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
+          <div className="flex cursor-pointer flex-col items-center space-y-2 rounded-lg border border-gray-200 p-4 transition-all duration-300 hover:bg-gray-800/100 hover:shadow-sm">
             <Users className="h-8 w-8 text-primary" />
             <h3 className="text-xl font-bold">Diverse Skill Pool</h3>
             <p className="text-center text-gray-500">
               Access a wide range of skills from our community of helpers.
             </p>
           </div>
-          <div className="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
+          <div className="flex cursor-pointer flex-col items-center space-y-2 rounded-lg border border-gray-200 p-4 transition-all duration-300 hover:bg-gray-800/100 hover:shadow-sm">
             <CheckCircle className="h-8 w-8 text-primary" />
             <h3 className="text-xl font-bold">Verified Profiles</h3>
             <p className="text-center text-gray-500">
               Trust our community with our thorough verification process.
             </p>
           </div>
-          <div className="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
+          <div className="flex cursor-pointer flex-col items-center space-y-2 rounded-lg border border-gray-200 p-4 transition-all duration-300 hover:bg-gray-800/100 hover:shadow-sm">
             <ArrowRight className="h-8 w-8 text-primary" />
             <h3 className="text-xl font-bold">Easy Matching</h3>
             <p className="text-center text-gray-500">
