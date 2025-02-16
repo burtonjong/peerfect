@@ -11,9 +11,9 @@ import { sendMessage } from "./actions";
 
 export default function ChatPage({
   userId,
-  username,
   post,
   conversationId,
+  conversationUsers,
 }: {
   userId: string;
   username: string;
@@ -23,11 +23,14 @@ export default function ChatPage({
     skillTag: string;
     user: {
       name: string;
-      bio: string;
-      profilePicture: string;
+      id: string;
     };
   };
   conversationId: string;
+  conversationUsers: {
+    poster: { username: string };
+    responder: { username: string };
+  };
 }) {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -35,6 +38,57 @@ export default function ChatPage({
   const supabase = createClient();
 
   useEffect(() => {
+    // Fetch existing messages
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("messages")
+        .select(
+          `
+          content,
+          sender_id,
+          created_at
+        `
+        )
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching messages:", error);
+      } else {
+        // Fetch user details for each message
+        const messagesWithUsers = await Promise.all(
+          data.map(async (message) => {
+            const { data: user, error: userError } = await supabase
+              .from("user_profiles")
+              .select("username, id")
+              .eq("id", message.sender_id)
+              .single();
+
+            if (userError) {
+              console.error("Error fetching user data:", userError);
+              return {
+                ...message,
+                user: { username: "Unknown", user_id: null },
+              };
+            }
+
+            return {
+              ...message,
+              user: {
+                username: user.username,
+                user_id: user.id,
+              },
+            };
+          })
+        );
+
+        setMessages(messagesWithUsers);
+      }
+    };
+
+    fetchMessages();
+
+    // Subscribe to new messages
     const channel = supabase
       .channel("public:messages")
       .on(
@@ -45,34 +99,47 @@ export default function ChatPage({
           table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
-        (payload) => {
-          console.log(payload);
-          console.log("FIRED");
+        async (payload) => {
           const newMessage = payload.new;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+          // Fetch the associated user information
+          const { data: user, error: userError } = await supabase
+            .from("user_profiles")
+            .select("username, id")
+            .eq("id", newMessage.sender_id)
+            .single();
+
+          if (userError) {
+            console.error("Error fetching user data:", userError);
+            return;
+          }
+
+          const messageWithUser = {
+            ...newMessage,
+            user: {
+              username: user.username,
+              user_id: user.id,
+            },
+          };
+
+          setMessages((prevMessages) => [...prevMessages, messageWithUser]);
         }
       )
       .subscribe();
 
+    // Cleanup subscription on component unmount
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [conversationId]);
+  }, [conversationId, supabase]);
 
   const handleSendMessage = async () => {
     if (newMessage.trim() !== "") {
-      const newMessageObject = {
-        user: {
-          username,
-          user_id: userId,
-        },
-        content: newMessage,
-      };
-      setMessages([...messages, newMessageObject]);
+      const messageContent = newMessage;
       setNewMessage("");
 
       const formData = new FormData();
-      formData.append("message", newMessage);
+      formData.append("message", messageContent);
       formData.append("conversationId", conversationId);
       formData.append("user_id", userId);
 
@@ -94,14 +161,8 @@ export default function ChatPage({
           </p>
         </div>
         <div className="mt-4 flex items-center p-4">
-          <img
-            src={post?.user?.profilePicture}
-            alt="JD"
-            className="h-10 w-10 rounded-full border"
-          />
           <div className="ml-3">
             <h6 className="text-sm font-semibold">{post?.user?.name}</h6>
-            <p className="text-xs text-gray-600">{post?.user?.bio}</p>
           </div>
         </div>
       </div>

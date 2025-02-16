@@ -35,9 +35,26 @@ export default async function ChatPageServer({
     return data;
   };
 
+  const getConversationUsers = async (conversationId: string) => {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("conversations")
+      .select(
+        "poster: poster_id (username), responder: responder_id (username)"
+      )
+      .eq("id", conversationId)
+      .single();
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  };
+
   const postId = (await params).postId;
 
   const post = await getPost(postId);
+  const conversationUsers = await getConversationUsers(conversationId);
 
   return (
     <ChatPage
@@ -45,6 +62,7 @@ export default async function ChatPageServer({
       username={username}
       post={post[0]}
       conversationId={conversationId}
+      conversationUsers={conversationUsers}
     />
   );
 }
