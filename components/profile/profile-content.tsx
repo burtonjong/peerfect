@@ -27,7 +27,6 @@ import SpecialDropdown from "./specialdropdown";
 const profileFormSchema = z.object({
   skillsGoodAt: z.array(z.string()),
   skillsNeedHelpWith: z.array(z.string()),
-  points: z.number(),
   bio: z.string().optional(),
 });
 
@@ -36,7 +35,6 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 const defaultValues: Partial<ProfileFormValues> = {
   skillsGoodAt: [],
   skillsNeedHelpWith: [],
-  points: 0,
   bio: "",
 };
 
@@ -70,7 +68,7 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
         if (user) {
           const { data, error } = await supabase
             .from("user_profiles")
-            .select("skills_had, skills_needed, points, bio")
+            .select("skills_had, skills_needed, bio")
             .eq("id", user.id)
             .single();
 
@@ -80,7 +78,6 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
 
           form.setValue("skillsGoodAt", data.skills_had || []);
           form.setValue("skillsNeedHelpWith", data.skills_needed || []);
-          form.setValue("points", data.points || 0);
           form.setValue("bio", data.bio || "");
         }
       } catch (error) {
@@ -127,7 +124,6 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
         .update({
           skills_had: data.skillsGoodAt,
           skills_needed: data.skillsNeedHelpWith,
-          points: data.points,
           bio: data.bio,
         })
         .eq("id", user.id);
@@ -148,12 +144,11 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (
     <CardContent>
-      <h1 className="py-2">Your points: {form.getValues("points")}</h1>
       <Separator className="mb-6" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
