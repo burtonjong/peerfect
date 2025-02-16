@@ -63,7 +63,7 @@ export function ProfileHeader({ user }: { user: any }) {
           <AvatarFallback>{userData.username[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <div>
-          <CardTitle>{userData.username}</CardTitle>
+          <CardTitle className="pb-1">{userData.username}</CardTitle>
           <CardDescription>{userData.email}</CardDescription>
         </div>
       </div>

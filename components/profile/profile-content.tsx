@@ -19,42 +19,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Toaster } from "@/components/ui/toaster";
 import { createClient } from "@/utils/supabase/client";
 
+import Dropdown from "./dropdown";
+
 const profileFormSchema = z.object({
-  firstName: z.string().min(2, {
-    message: "First name must be at least 2 characters.",
-  }),
-  lastName: z.string().min(2, {
-    message: "Last name must be at least 2 characters.",
-  }),
-  age: z.number().min(18, {
-    message: "You must be at least 18 years old.",
-  }),
-  bio: z.string().max(500, {
-    message: "Bio must not be longer than 500 characters.",
-  }),
   skillsGoodAt: z.array(z.string()),
   skillsNeedHelpWith: z.array(z.string()),
-  isAvailableToHelp: z.boolean(),
-  isLookingForHelp: z.boolean(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const defaultValues: Partial<ProfileFormValues> = {
-  firstName: "",
-  lastName: "",
-  age: 18,
-  bio: "",
   skillsGoodAt: [],
   skillsNeedHelpWith: [],
-  isAvailableToHelp: false,
-  isLookingForHelp: false,
 };
 
 export function ProfileContent({ user, enums }: { user: any; enums: any }) {
@@ -64,8 +43,17 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
     defaultValues,
   });
 
-  console.log(enums);
+  const selectedSkillsGoodAt = form.watch("skillsGoodAt");
+  const selectedSkillsNeedHelpWith = form.watch("skillsNeedHelpWith");
 
+  const allSelectedSkills = [
+    ...selectedSkillsGoodAt,
+    ...selectedSkillsNeedHelpWith,
+  ];
+
+  const availableEnums = enums.filter(
+    (skill: string) => !allSelectedSkills.includes(skill)
+  );
   const [loading, setLoading] = useState(true);
   const [newSkillGoodAt, setNewSkillGoodAt] = useState("");
   const [newSkillNeedHelpWith, setNewSkillNeedHelpWith] = useState("");
@@ -155,10 +143,6 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
   };
 
   function onSubmit(data: ProfileFormValues) {
-    Toaster({
-      title: "Profile updated",
-      description: "Your profile has been successfully updated.",
-    });
     console.log(data);
   }
 
@@ -195,11 +179,10 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
                       </Badge>
                     ))}
                     <div className="flex items-center">
-                      <Input
+                      <Dropdown
+                        enums={availableEnums} // Only enums not selected in either field
                         value={newSkillGoodAt}
-                        onChange={(e) => setNewSkillGoodAt(e.target.value)}
-                        placeholder="Add a skill"
-                        className="h-8 w-32"
+                        setter={setNewSkillGoodAt}
                       />
                       <Button
                         type="button"
@@ -220,6 +203,7 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
               </FormItem>
             )}
           />
+          <Separator />
           <FormField
             control={form.control}
             name="skillsNeedHelpWith"
@@ -243,13 +227,10 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
                       </Badge>
                     ))}
                     <div className="flex items-center">
-                      <Input
+                      <Dropdown
+                        enums={availableEnums} // Same filtered enums here
                         value={newSkillNeedHelpWith}
-                        onChange={(e) =>
-                          setNewSkillNeedHelpWith(e.target.value)
-                        }
-                        placeholder="Add a skill"
-                        className="h-8 w-32"
+                        setter={setNewSkillNeedHelpWith}
                       />
                       <Button
                         type="button"
@@ -270,54 +251,6 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
               </FormItem>
             )}
           />
-          <Separator />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="isAvailableToHelp"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Available to Help
-                    </FormLabel>
-                    <FormDescription>
-                      Make yourself available to help others with your skills.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="isLookingForHelp"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Looking for Help
-                    </FormLabel>
-                    <FormDescription>
-                      Indicate if you're currently seeking help from others.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
-          <Button type="submit">Update Profile</Button>
         </form>
       </Form>
     </CardContent>

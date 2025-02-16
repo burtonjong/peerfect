@@ -9,27 +9,36 @@ drop table if exists posts;
 drop table if exists user_profiles;
 -- Drop the skills table (if it exists)
 drop table if exists skills;
+drop type if exists skill_enum;
+-- Create the skill_enum type
+create type skill_enum as enum (
+  'Laundry',
+  'Finances',
+  'Cooking',
+  'Cleaning',
+  'Gardening',
+  'Programming',
+  'Design',
+  'Tutoring',
+  'Repairs',
+  'Fitness'
+);
 -- Recreate user_profiles table
 create table user_profiles (
-  id uuid primary key default gen_random_uuid(),
-  auth_user_id uuid references auth.users(id) on delete cascade not null unique,
+  id uuid references auth.users(id) on delete cascade not null unique,
   username text unique not null,
-  points integer default 10 check (points >= 0),
-  skills_needed uuid[] default array[]::uuid[],
-  skills_had uuid[] default array[]::uuid[],
+  email text unique not null,
+  points integer default 100 check (points >= 0),
+  skills_needed skill_enum[] default array[]::skill_enum[],
+  skills_had skill_enum[] default array[]::skill_enum[],
   created_at timestamptz default now()
-);
--- Recreate skills table
-create table skills (
-  id uuid primary key default gen_random_uuid(),
-  name text unique not null
 );
 -- Recreate posts table
 create table posts (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   body text not null,
-  skill_id uuid references skills(id) on delete set null,
+  skill skill_enum,
   author_id uuid references user_profiles(id) on delete cascade not null,
   created_at timestamptz default now()
 );
@@ -37,7 +46,6 @@ create table posts (
 create table conversations (
   id uuid primary key default gen_random_uuid(),
   post_id uuid references posts(id) on delete cascade not null,
-  skill_id uuid references skills(id) on delete set null,
   poster_id uuid references user_profiles(id) on delete cascade not null,
   responder_id uuid references user_profiles(id) on delete cascade not null,
   created_at timestamptz default now()
@@ -54,8 +62,8 @@ create table messages (
 create or replace function handle_new_user()
 returns trigger as $$
 begin
-  insert into user_profiles (auth_user_id, username)
-  values (new.id, new.email);
+  insert into public.user_profiles (id, username, email)
+  values (new.id, new.raw_user_meta_data->>'name', new.email);
   return new;
 end;
 $$ language plpgsql security definer;
@@ -72,7 +80,7 @@ on user_profiles for select using (true);
 -- RLS Policy: Users can update their own profile
 drop policy if exists "Users can update own profile" on user_profiles;
 create policy "Users can update own profile"
-on user_profiles for update using (auth.uid() = auth_user_id);
+on user_profiles for update using (auth.uid() = id);
 -- Enable RLS on posts
 alter table posts enable row level security;
 -- RLS Policy: Users can read all posts
