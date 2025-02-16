@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Send } from "lucide-react";
 
@@ -13,10 +13,8 @@ export default function ChatPage({
   userId,
   post,
   conversationId,
-  conversationUsers,
 }: {
   userId: string;
-  username: string;
   post: {
     title: string;
     body: string;
@@ -27,15 +25,23 @@ export default function ChatPage({
     };
   };
   conversationId: string;
-  conversationUsers: {
-    poster: { username: string };
-    responder: { username: string };
-  };
 }) {
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  type MessageType = {
+    content: string;
+    sender_id: string;
+    created_at: string;
+    user: {
+      username: string;
+      user_id: string;
+    };
+  };
+
+  const [messages, setMessages] = useState<MessageType[]>([]);
 
   const supabase = createClient();
+
+  const scrollToBottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Fetch existing messages
@@ -83,6 +89,8 @@ export default function ChatPage({
         );
 
         setMessages(messagesWithUsers);
+
+        scrollToBottom();
       }
     };
 
@@ -122,7 +130,17 @@ export default function ChatPage({
             },
           };
 
-          setMessages((prevMessages) => [...prevMessages, messageWithUser]);
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              ...messageWithUser,
+              content: newMessage.content,
+              sender_id: newMessage.sender_id,
+              created_at: newMessage.created_at,
+            },
+          ]);
+
+          scrollToBottom();
         }
       )
       .subscribe();
@@ -132,6 +150,15 @@ export default function ChatPage({
       supabase.removeChannel(channel);
     };
   }, [conversationId, supabase]);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      scrollToBottomRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }, 100); // Adjust the delay as needed
+  };
 
   const handleSendMessage = async () => {
     if (newMessage.trim() !== "") {
@@ -144,6 +171,8 @@ export default function ChatPage({
       formData.append("user_id", userId);
 
       await sendMessage(formData);
+
+      scrollToBottom();
     }
   };
 
@@ -171,6 +200,7 @@ export default function ChatPage({
           {messages.map((message, index) => (
             <Message key={index} message={message} userId={userId} />
           ))}
+          <div ref={scrollToBottomRef} />
         </div>
         <div className="mt-2 flex">
           <input
