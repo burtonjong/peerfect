@@ -4,11 +4,15 @@ import React, { useState } from "react";
 
 import { Send } from "lucide-react";
 
+import * as schema from "@/database.types";
+
+import { sendMessage } from "./actions";
+
 export default function ChatPage({
   userId,
-
   post,
   messages: initialMessages,
+  conversationId,
 }: {
   userId: string;
   post: {
@@ -27,14 +31,15 @@ export default function ChatPage({
       userId: string;
       profilePicture: string;
     };
-    message: string;
+    content: string;
   }[];
+  conversationId: string;
 }) {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState(initialMessages);
   const currentUserId = userId;
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (newMessage.trim() !== "") {
       const newMessageObject = {
         user: {
@@ -46,6 +51,13 @@ export default function ChatPage({
       };
       setMessages([...messages, newMessageObject]);
       setNewMessage("");
+
+      const formData = new FormData();
+      formData.append("message", newMessage);
+      formData.append("conversationId", conversationId);
+      formData.append("userId", currentUserId);
+
+      await sendMessage(formData);
     }
   };
 
@@ -64,13 +76,13 @@ export default function ChatPage({
         </div>
         <div className="mt-4 flex items-center p-4">
           <img
-            src={post.user.profilePicture}
+            src={post?.user?.profilePicture}
             alt="JD"
             className="h-10 w-10 rounded-full border"
           />
           <div className="ml-3">
-            <h6 className="text-sm font-semibold">{post.user.name}</h6>
-            <p className="text-xs text-gray-600">{post.user.bio}</p>
+            <h6 className="text-sm font-semibold">{post?.user?.name}</h6>
+            <p className="text-xs text-gray-600">{post?.user?.bio}</p>
           </div>
         </div>
       </div>
@@ -80,31 +92,33 @@ export default function ChatPage({
             <div
               key={index}
               className={`mb-4 flex gap-2 p-2 ${
-                message.user.userId === currentUserId
+                message?.user?.user_id === currentUserId
                   ? "justify-end"
                   : "justify-start"
               }`}
             >
-              {message.user.userId !== currentUserId && (
+              {message?.user?.user_id !== currentUserId && (
                 <img
-                  src={message.user.profilePicture}
+                  src={message?.user?.profilePicture}
                   alt="JD"
                   className="h-10 w-10 rounded-full border"
                 />
               )}
               <div
                 className={`max-w-xs rounded-2xl p-2 ${
-                  message.user.userId === currentUserId
+                  message?.user?.user_id === currentUserId
                     ? "bg-blue-500 text-white"
                     : "bg-gray-300 text-black"
                 }`}
               >
-                <h6 className="text-sm font-semibold">{message.user.name}</h6>
-                <p className="text-xs">{message.message}</p>
+                <h6 className="text-sm font-semibold">
+                  {message?.user?.username}
+                </h6>
+                <p className="text-xs">{message.content}</p>
               </div>
-              {message.user.userId === currentUserId && (
+              {message?.user?.user_id === currentUserId && (
                 <img
-                  src={message.user.profilePicture}
+                  src={message?.user?.profilePicture}
                   alt="JD"
                   className="h-10 w-10 rounded-full border"
                 />

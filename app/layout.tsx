@@ -43,7 +43,7 @@ export default function RootLayout({
             </ClientSideComponent>
             <main className="flex flex-1 flex-col items-center">
               <div className="flex w-full flex-1 flex-col items-center gap-20">
-                <div className="flex max-w-5xl flex-col gap-20 p-5">
+                <div className="flex h-full max-w-5xl flex-1 flex-col gap-20 p-5">
                   {children}
                 </div>
               </div>
