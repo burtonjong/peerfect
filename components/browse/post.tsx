@@ -44,6 +44,7 @@ const Post = ({ id, title, body, skill, created_at }: PostProps) => {
             {new Date(created_at || "").toLocaleString()}
           </p>
           <p className="mb-4">{body}</p>
+          {/* Button to start chat here, connect it via on click i guess idk*/}
           <Button onClick={() => alert("Start Chat")}>Start Chat</Button>
         </Modal>
         <div className="mt-4">

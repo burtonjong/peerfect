@@ -1,7 +1,9 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Post from '@/components/browse/post';
+"use client";
+
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import Post from "@/components/browse/post";
 
 type Post = {
   id: string;
@@ -20,6 +22,7 @@ export default function SkillPage() {
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+  const [sortedPosts, setSortedPosts] = useState<Post[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -37,50 +40,54 @@ export default function SkillPage() {
 
   useEffect(() => {
     if (capitalizedSkill && posts.length > 0) {
-      setFilteredPosts(posts.filter(post => post.skill === capitalizedSkill));
+      setFilteredPosts(posts.filter((post) => post.skill === capitalizedSkill));
     }
   }, [capitalizedSkill, posts]);
 
   useEffect(() => {
     if (filteredPosts.length > 0) {
       const sorted = [...filteredPosts].sort((a, b) => {
-        if (!a.created_at || !b.created_at) return 0; 
+        if (!a.created_at || !b.created_at) return 0;
         const dateA = new Date(a.created_at);
         const dateB = new Date(b.created_at);
-        return sortOrder === "desc" ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
+        return sortOrder === "desc"
+          ? dateB.getTime() - dateA.getTime()
+          : dateA.getTime() - dateB.getTime();
       });
-      setFilteredPosts(sorted);
+      setSortedPosts(sorted);
+    } else {
+      setSortedPosts([]);
     }
   }, [sortOrder, filteredPosts]);
 
   const handleSortChange = (order: "asc" | "desc") => {
     setSortOrder(order);
-    setDropdownOpen(false); 
+    setDropdownOpen(false);
   };
 
   return (
-    <div className="container min-w-[750px] mx-auto px-4">
-      <div className="flex justify-between items-center mb-8 mt-12">
+    <div className="container mx-auto min-w-[750px] px-4">
+      <div className="mb-8 mt-12 flex items-center justify-between">
         <h1 className="text-4xl font-bold">Posts for {capitalizedSkill}</h1>
 
         <div className="relative">
           <button
             onClick={() => setDropdownOpen((prev) => !prev)}
-            className="px-3 py-1.5 text-sm font-medium text-white border border-transparent rounded-md bg-[hsl(220,50%,20%)] hover:bg-[hsl(220,50%,25%)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            className="rounded-md border border-transparent bg-[hsl(220,50%,20%)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[hsl(220,50%,25%)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             Sort by Date
           </button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-[hsl(220,50%,20%)] border border-transparent rounded-md shadow-lg">
+            <div className="absolute right-0 mt-2 w-40 rounded-md border border-transparent bg-[hsl(220,50%,20%)] shadow-lg">
               <div
                 onClick={() => handleSortChange("desc")}
-                className="px-4 py-2 text-sm text-white cursor-pointer hover:bg-[hsl(220,50%,25%)]"
+                className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
               >
                 Newest First
               </div>
               <div
                 onClick={() => handleSortChange("asc")}
-                className="px-4 py-2 text-sm text-white cursor-pointer hover:bg-[hsl(220,50%,25%)]"
+                className="cursor-pointer px-4 py-2 text-sm text-white hover:bg-[hsl(220,50%,25%)]"
               >
                 Oldest First
               </div>
@@ -90,8 +97,8 @@ export default function SkillPage() {
       </div>
 
       <div className="space-y-6">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => (
+        {sortedPosts.length > 0 ? (
+          sortedPosts.map((post) => (
             <Post
               key={post.id}
               id={post.id}
