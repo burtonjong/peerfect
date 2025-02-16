@@ -1,5 +1,3 @@
-// app/browse/layout.tsx
-
 'use client';
 
 import React, { useEffect, useState } from "react";
@@ -36,11 +34,11 @@ export default function BrowseLayout({
             Peerfect
           </Link>
 
-          <div className="relative flex-1 max-w-2xl mx-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="relative mx-4 max-w-2xl flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
             <Input
               placeholder="Search classes, digital products, teachers, and more"
-              className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60"
+              className="border-white/20 bg-white/10 pl-10 text-white placeholder:text-white/60"
             />
           </div>
 
@@ -55,7 +53,9 @@ export default function BrowseLayout({
             <Button variant="ghost" className="text-white">
               <User className="h-5 w-5" />
             </Button>
-            <Button className="bg-[#4ADE80] text-[#0A1A2B] hover:bg-[#4ADE80]/90">Start Now</Button>
+            <Button className="bg-[#4ADE80] text-[#0A1A2B] hover:bg-[#4ADE80]/90">
+              Start Now
+            </Button>
           </nav>
         </div>
       </header>
