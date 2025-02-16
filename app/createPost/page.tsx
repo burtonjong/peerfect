@@ -4,22 +4,36 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 
-//placeholder for now
-const skills = ["python", "java", "c", "javascript"];
-
 export default function CreatePost() {
+  const [skills, setSkills] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      const res = await fetch(`${window.location.origin}/api/skills`);
+      const data = await res.json();
+      if (data && !data.error) {
+        setSkills(data);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
   const [postData, setPostData] = useState({
     title: '',
     content: '',
     category: '',
     tags: '',
     skills: [] as string[],
+    points: 0, 
   });
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    setDropdownOpen(false);
-  }, []);
+    if (postData.skills.length === 0) {
+      setDropdownOpen(true); // Open dropdown when no skill is selected
+    }
+  }, [postData.skills]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -30,20 +44,19 @@ export default function CreatePost() {
   };
 
   const handleSkillSelect = (skill: string) => {
-    if (!postData.skills.includes(skill)) {
-      setPostData((prevData) => ({
-        ...prevData,
-        skills: [...prevData.skills, skill],
-      }));
-    }
-    setDropdownOpen(false);
-  };
-
-  const handleRemoveSkill = (skill: string) => {
     setPostData((prevData) => ({
       ...prevData,
-      skills: prevData.skills.filter((item) => item !== skill),
+      skills: [skill], // Only allow one skill to be selected
     }));
+    setDropdownOpen(false); // Close dropdown once a skill is selected
+  };
+
+  const handleRemoveSkill = () => {
+    setPostData((prevData) => ({
+      ...prevData,
+      skills: [],
+    }));
+    setDropdownOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,6 +68,7 @@ export default function CreatePost() {
       category: '',
       tags: '',
       skills: [],
+      points: 0, 
     });
   };
 
@@ -81,7 +95,7 @@ export default function CreatePost() {
           </div>
 
           <div>
-            <label className="block text-lg font-medium">Content</label>
+            <label className="block text-lg font-medium">Description</label>
             <textarea
               name="content"
               value={postData.content}
@@ -93,8 +107,8 @@ export default function CreatePost() {
           </div>
 
           <div>
-            <label className="block text-lg font-medium">Skills</label>
-            <div className="flex items-center gap-4 mt-2">
+            <label className="block text-lg font-medium">Assign Skill</label>
+            <div className="flex items-center gap-4 mt-1">
               <Button variant="outline" onClick={handleDropdownToggle}>
                 <Plus className="mr-2 h-4 w-4" /> Add Skill
               </Button>
@@ -102,7 +116,7 @@ export default function CreatePost() {
                 {postData.skills.map((skill) => (
                   <span key={skill} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full flex items-center gap-2">
                     {skill}
-                    <button type="button" onClick={() => handleRemoveSkill(skill)} className="text-red-500">
+                    <button type="button" onClick={handleRemoveSkill} className="text-red-500">
                       <X className="h-4 w-4" />
                     </button>
                   </span>
@@ -111,7 +125,7 @@ export default function CreatePost() {
             </div>
 
             {dropdownOpen && (
-              <div className="absolute mt-2 bg-blue-50 border border-blue-200 rounded-lg shadow-lg w-48 z-10">
+              <div className="absolute mt-2 bg-blue-50 border border-blue-200 rounded-lg shadow-lg w-40 z-10 max-h-40 overflow-y-auto rounded-b-lg">
                 {skills.filter((skill) => !postData.skills.includes(skill)).map((skill) => (
                   <button
                     key={skill}
@@ -124,6 +138,19 @@ export default function CreatePost() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div>
+            <label className="block text-lg font-medium">Points</label>
+            <input
+              type="number"
+              name="points"
+              value={postData.points}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-lg bg-transparent focus:ring focus:ring-blue-500"
+              min="0"
+              required
+            />
           </div>
 
           <div className="flex justify-center">
