@@ -1,3 +1,4 @@
+
 import React from "react";
 import { SidebarLink } from "@/components/ui/sidebar-link";  
 import Link from "next/link";
@@ -8,13 +9,11 @@ type SidebarProps = {
 
 const Sidebar: React.FC<SidebarProps> = ({ skills }) => {
   const sidebarLinks = [
-    { name: "All Classes", href: "/browse" },
+    { name: "All Skills", href: "/browse" },
     ...skills.map((skill) => ({
       name: skill,
       href: `/browse/${skill.toLowerCase()}`, 
     })),
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "AI for Photography", href: "/browse/ai-photo" },
   ];
 
   return (

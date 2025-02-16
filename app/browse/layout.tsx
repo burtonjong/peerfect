@@ -1,17 +1,33 @@
-// components/BrowseLayout.tsx
-import React from "react";
+// app/browse/layout.tsx
+
+'use client';
+
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Bell, Search, User } from "lucide-react";
-import Sidebar from "@/components/browse/sidebar"; 
+import Sidebar from "@/components/browse/sidebar";  // Import the Sidebar component
 import Link from "next/link";
 
-type BrowseLayoutProps = {
+export default function BrowseLayout({
+  children,
+}: {
   children: React.ReactNode;
-  skills: string[];  
-};
+}) {
+  const [skills, setSkills] = useState<string[]>([]);
 
-export default function BrowseLayout({ children, skills }: BrowseLayoutProps) {
+  useEffect(() => {
+    const fetchSkills = async () => {
+        const res = await fetch(`${window.location.origin}/api/skills`);
+        const data = await res.json();
+      if (data && !data.error) {
+        setSkills(data);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b bg-[#0A1A2B] text-white w-full fixed top-0 left-0 z-10">
@@ -45,7 +61,7 @@ export default function BrowseLayout({ children, skills }: BrowseLayoutProps) {
       </header>
 
       <div className="flex-1 flex pt-16">
-        <Sidebar skills={skills} />
+        <Sidebar skills={skills} /> {/* Use Sidebar component */}
 
         <main className="flex-1 p-8 ml-64 pb-16">{children}</main>
       </div>
