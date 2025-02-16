@@ -22,7 +22,7 @@ export default async function BrowsePage() {
   );
 
   const postsThatAreNotUsers = postsWithoutConversations.filter(
-    (post) => post.poster_id !== userId
+    (post) => post.author_id !== userId
   );
 
   return (
