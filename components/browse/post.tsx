@@ -1,7 +1,7 @@
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { User } from "lucide-react";
-import { useRouter } from 'next/navigation';
 
 import { createChat } from "@/app/dashboard/browse/actions";
 import Modal from "@/components/browse/modal";
@@ -19,7 +19,7 @@ type PostProps = {
   created_at: string | null;
   poster_id: string;
   user_id: string;
-  modal?: boolean; 
+  modal?: boolean;
 };
 
 type UserData = {
@@ -37,12 +37,11 @@ const Post = ({
   created_at,
   poster_id,
   user_id,
-  modal = false, 
+  modal = false,
 }: PostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(modal);
   const [userData, setUserData] = useState<UserData | null>(null);
   const router = useRouter();
-
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -51,9 +50,9 @@ const Post = ({
   const handleCloseModal = () => {
     setIsModalOpen(false);
     const currentUrl = new URL(window.location.href);
-    currentUrl.search = ''; 
-    router.push(currentUrl.toString()); 
- };
+    currentUrl.search = "";
+    router.push(currentUrl.toString());
+  };
 
   const handleStartChat = async () => {
     const formData = new FormData();
@@ -100,7 +99,7 @@ const Post = ({
               <span>{new Date(created_at || "").toLocaleDateString()}</span>
             </div>
           </div>
-          <div className="absolute right-4 top-4 flex flex-col items-center">
+          {/* <div className="absolute right-4 top-4 flex flex-col items-center">
             <Avatar className="h-10 w-10">
               <AvatarImage
                 src={userData?.avatar_url || ""}
@@ -113,7 +112,7 @@ const Post = ({
             <p className="mt-1 text-sm font-semibold">
               {userData?.username || "Anonymous"}
             </p>
-          </div>
+          </div> */}
         </div>
         <Separator className="my-4" />
         <p className="text-base">{body}</p>
@@ -167,4 +166,4 @@ const Post = ({
   );
 };
 
-export default Post
+export default Post;
