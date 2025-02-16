@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { useTheme } from "next-themes";
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,12 +14,17 @@ interface ModalProps {
 
 export default function FancyModal({ isOpen, onClose, children }: ModalProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   if (!isMounted) return null;
+
+  const modalBackgroundColor =
+    theme === "dark" ? "bg-[hsl(220,50%,20%)]" : "bg-white";
+  const modalTextColor = theme === "dark" ? "text-gray-200" : "text-gray-800";
 
   return (
     <AnimatePresence>
@@ -34,7 +40,7 @@ export default function FancyModal({ isOpen, onClose, children }: ModalProps) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className="relative w-full max-w-2xl rounded-xl bg-[hsl(220,50%,20%)] p-8 shadow-2xl"
+            className={`relative w-full max-w-2xl rounded-xl ${modalBackgroundColor} p-8 shadow-2xl ${modalTextColor}`}
           >
             <motion.button
               whileHover={{ scale: 1.1 }}
