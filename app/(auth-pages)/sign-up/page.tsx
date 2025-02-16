@@ -36,9 +36,6 @@ export default function Signup(props: { searchParams: Promise<Message> }) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const result = await signUpAction(formData);
-    if (result.success) {
-      router.push("/onboarding");
-    }
   };
 
   return (
