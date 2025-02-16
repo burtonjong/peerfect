@@ -78,11 +78,11 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 font-brand text-6xl font-bold text-primary">
+      <h1 className="animate-fade-in-up mb-8 font-brand text-6xl font-bold text-primary transition-all">
         Welcome to Peerfect
       </h1>
 
-      <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="animate-fade-in-up-1 mb-12 grid grid-cols-1 gap-6 transition-all md:grid-cols-2">
         <div className="rounded-lg border p-4">
           <h3 className="font-brand text-xl font-semibold">
             Learn a New Skill
