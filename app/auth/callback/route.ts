@@ -29,9 +29,20 @@ export async function GET(request: Request) {
         });
       }
 
-      if (user && user.email_confirmed_at !== null && user.email_confirmed_at !== "") {
+      if (
+        user &&
+        user.email_confirmed_at !== null &&
+        user.email_confirmed_at !== ""
+      ) {
         // Redirect to onboarding if email is verified
-        return NextResponse.redirect(`${origin}/onboarding`);
+
+        let { data: enums } = await supabase.rpc("get_types", {
+          enum_type: "skills_enum",
+        });
+
+        return NextResponse.redirect(
+          `${origin}/dashboard/onboarding?enums=${encodeURIComponent(enums)}&userId=${encodeURIComponent(user.id)}`
+        );
       } else {
         // Inform the user to verify their email
         return NextResponse.json({
@@ -51,5 +62,5 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/protected`);
+  return NextResponse.redirect(`${origin}/dashboard`);
 }
