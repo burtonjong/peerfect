@@ -1,10 +1,18 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const CreateMeetButton = () => {
+  const { data: session } = useSession();
+
   const createMeet = async () => {
+    if (!session) {
+      console.error("User is not authenticated.");
+      return alert("You must be signed in to create a Google Meet.");
+    }
+
     try {
       const response = await fetch("/api/create-meet", { method: "POST" });
       const data = await response.json();

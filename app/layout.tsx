@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Gabarito, Inter } from "next/font/google";
 import type React from "react";
 
+import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 
 import ClientSideComponent from "@/components/client-side-component";
@@ -37,19 +38,21 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange={true}
         >
-          <div className="flex min-h-screen flex-col">
-            <ClientSideComponent>
-              <Header />
-            </ClientSideComponent>
-            <main className="flex flex-1 flex-col items-center">
-              <div className="flex w-full flex-1 flex-col items-center gap-20">
-                <div className="flex h-full w-full max-w-screen-xl flex-1 flex-col gap-20 p-5">
-                  {children}
+          <SessionProvider>
+            <div className="flex min-h-screen flex-col">
+              <ClientSideComponent>
+                <Header />
+              </ClientSideComponent>
+              <main className="flex flex-1 flex-col items-center">
+                <div className="flex w-full flex-1 flex-col items-center gap-20">
+                  <div className="flex h-full w-full max-w-screen-xl flex-1 flex-col gap-20 p-5">
+                    {children}
+                  </div>
                 </div>
-              </div>
-            </main>
-            <Footer className="relative z-10" />
-          </div>
+              </main>
+              <Footer className="relative z-10" />
+            </div>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
