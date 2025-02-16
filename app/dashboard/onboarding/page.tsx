@@ -1,42 +1,24 @@
-"use client";
+import { Suspense } from "react";
 
-import React, { useState } from "react";
+import Onboarding from "@/components/onboarding/onboarding";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Onboarding() {
-  const [teachSkills, setTeachSkills] = useState("");
-  const [learnSkills, setLearnSkills] = useState("");
+export default async function Page() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Handle form submission logic here
-    console.log("Skills to teach:", teachSkills);
-    console.log("Skills to learn:", learnSkills);
-  };
+  const { data: enums } = await supabase.rpc("get_types", {
+    enum_type: "skill_enum",
+  });
 
+  if (!user) {
+    return <div>Failed to load user data</div>;
+  }
   return (
-    <div className="onboarding-container">
-      <h1>Welcome to the Skills Exchange Platform!</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="teachSkills">Skills you can teach:</label>
-          <input
-            type="text"
-            id="teachSkills"
-            value={teachSkills}
-            onChange={(e) => setTeachSkills(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="learnSkills">Skills you want to learn:</label>
-          <input
-            type="text"
-            id="learnSkills"
-            value={learnSkills}
-            onChange={(e) => setLearnSkills(e.target.value)}
-          />
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <Suspense>
+      <Onboarding enums={enums} user={user} />;
+    </Suspense>
   );
 }
