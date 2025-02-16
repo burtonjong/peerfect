@@ -1,23 +1,23 @@
-import Body from "@/components/landingpage/body"
-import Body2 from "@/components/landingpage/body2"
-import Body3 from "@/components/landingpage/body3"
-import Body4 from "@/components/landingpage/body4"
-import Body5 from "@/components/landingpage/body5"
-import Footer from "@/components/landingpage/footer"
-import Header from "@/components/landingpage/header"
+import Features from "@/components/landingpage/features";
+import Footer from "@/components/landingpage/footer";
+import GetStarted from "@/components/landingpage/get-started";
+import Header from "@/components/landingpage/header";
+import HeroSection from "@/components/landingpage/hero-section";
+import SuccessStories from "@/components/landingpage/success-stories";
+import WhyPeerfect from "@/components/landingpage/why-peerfect";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header/>
+    <div className="flex min-h-screen flex-col">
+      <Header />
       <main className="flex-1">
-        <Body/>
-        <Body2/>
-        <Body3/>
-        <Body4/>
-        <Body5/>
+        <HeroSection />
+        <WhyPeerfect />
+        <Features />
+        <SuccessStories />
+        <GetStarted />
       </main>
-      <Footer/>
+      <Footer />
     </div>
-  )
+  );
 }

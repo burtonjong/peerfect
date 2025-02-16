@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import Header from "@/components/header-auth";
 import { ProfileContent } from "@/components/profile/profile-content";
 import { ProfileHeader } from "@/components/profile/profile-header";
 import { Card } from "@/components/ui/card";
@@ -58,7 +57,6 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto py-10">
-      <Header />
       <Card>
         <ProfileHeader />
         <ProfileContent form={form} onSubmit={onSubmit} />
