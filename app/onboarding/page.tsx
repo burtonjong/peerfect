@@ -6,7 +6,7 @@ export default function Onboarding() {
   const [teachSkills, setTeachSkills] = useState("");
   const [learnSkills, setLearnSkills] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Handle form submission logic here
     console.log("Skills to teach:", teachSkills);
