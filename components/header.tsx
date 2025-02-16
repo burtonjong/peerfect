@@ -11,10 +11,18 @@ export default function Header() {
         <div className="flex items-center gap-5 font-semibold">
           <Link
             href={"/dashboard"}
-            className="flex flex-row items-center font-brand text-xl text-primary"
+            className="group flex flex-row items-center font-brand text-xl text-primary" // Add group class
           >
-            <Handshake size="24" strokeWidth={2} className="mr-1" />
-            Peerfect
+            <Handshake
+              size="24"
+              strokeWidth={2}
+              className="mr-1 transform transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" // Handshake hover animation
+            />
+            <span className="transition-all duration-300 group-hover:text-primary/80">
+              {" "}
+              {/* Title hover effect */}
+              Peerfect
+            </span>
           </Link>
         </div>
         <HeaderAuth />
