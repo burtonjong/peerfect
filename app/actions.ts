@@ -11,7 +11,10 @@ export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
+  const origin =
+    process.env.NODE_ENV === "production"
+      ? "https://your-production-url.com"
+      : (await headers()).get("origin");
 
   if (!email || !password || !username) {
     return { success: false, message: "Email and password are required" };
@@ -33,12 +36,12 @@ export const signUpAction = async (formData: FormData) => {
 
   if (data.user) {
     const { error: profileError } = await supabase
-      .from('user_profiles')
+      .from("user_profiles")
       .insert([
         {
           id: data.user.id,
           username: username,
-        }
+        },
       ]);
 
     if (profileError) {
