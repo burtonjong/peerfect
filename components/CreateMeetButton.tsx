@@ -1,15 +1,15 @@
 "use client";
 
 import { Teach } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { createGoogleMeetSpace } from "@/lib/googleMeet";
 
 const CreateMeetButton = () => {
   const createMeet = async () => {
     try {
-      const space = await createGoogleMeetSpace();
-      console.log("Google Meet Space:", space);
+      const response = await fetch("/api/create-meet", { method: "POST" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      console.log("Google Meet Space:", data);
     } catch (error) {
       console.error("Error creating Google Meet space:", error);
     }

@@ -3,11 +3,13 @@ const nextConfig = {
     webpack: (config, { isServer }) => {
       if (!isServer) {
         config.resolve.fallback = {
+          fs: false,
           net: false,
           tls: false,
-          fs: false,
-          http: require.resolve("stream-http"), // Polyfill for HTTP
-          https: require.resolve("https-browserify"), // Polyfill for HTTPS
+          child_process: false,
+          "node:events": false, // Ignore node-specific modules
+          http: require.resolve("stream-http"),
+          https: require.resolve("https-browserify"),
         };
       }
   
