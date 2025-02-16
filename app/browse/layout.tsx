@@ -1,4 +1,6 @@
-import type React from "react";
+'use client'
+
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Bell, Search, User } from "lucide-react";
@@ -10,18 +12,27 @@ export default function BrowseLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [skills, setSkills] = useState<string[]>([]);
+
+  // Fetch skills from the API
+  useEffect(() => {
+    const fetchSkills = async () => {
+      const res = await fetch('/api/skills');  // Assuming you have an API route to fetch skills
+      const data = await res.json();
+      if (data && !data.error) {
+        setSkills(data);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
   const sidebarLinks = [
     { name: "All Classes", href: "/browse" },
-    { name: "Creative Career", href: "/browse/creative" },
-    { name: "Creativity & Inspiration", href: "/browse/inspiration" },
-    { name: "Design", href: "/browse/design" },
-    { name: "Art & Illustration", href: "/browse/art" },
-    { name: "Film & Video", href: "/browse/video" },
-    { name: "Photography", href: "/browse/photography" },
-    { name: "Photography Career & Industry", href: "/browse/photo-career" },
-    { name: "Photography Techniques & Fundamentals", href: "/browse/photo-techniques" },
-    { name: "Photo Post-Production", href: "/browse/photo-post" },
-    { name: "Photographic Styles", href: "/browse/photo-styles" },
+    ...skills.map(skill => ({
+      name: skill,
+      href: `/browse/${skill.toLowerCase()}`,  // Create dynamic links for each skill
+    })),
     { name: "Dashboard", href: "/dashboard" },
     { name: "AI for Photography", href: "/browse/ai-photo" },
   ];
@@ -75,4 +86,3 @@ export default function BrowseLayout({
     </div>
   );
 }
-
