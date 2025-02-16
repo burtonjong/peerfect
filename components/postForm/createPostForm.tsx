@@ -12,8 +12,8 @@ import Dropdown from "@/components/profile/dropdown";
 const postFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   body: z.string().min(1, "Description is required"),
-  points: z.number().min(0, "Points must be at least 0").int(),
-  skill: z.string().min(1, "Skill is required"),
+  points: z.string(), 
+  skill: z.string(),
 });
 
 type PostFormValues = z.infer<typeof postFormSchema>;
@@ -33,7 +33,7 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
     defaultValues: {
       title: "",
       body: "",
-      points: 0,
+      points: "0", 
       skill: "",
     },
   });
@@ -41,8 +41,16 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
   const { handleSubmit, control, formState: { errors } } = form;
 
   const handleFormSubmit = async (data: PostFormValues) => {
+    console.log("ASD")
     setLoading(true);
     setError(null);
+
+    const parsedData = {
+      ...data,
+      points: Number(data.points),  
+      author_id: user.id,
+      skill,
+    };
 
     try {
       const res = await fetch(`${window.location.origin}/api/posts`, {
@@ -50,11 +58,7 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...data,
-          author_id: user.id,  
-          skill,
-        }),
+        body: JSON.stringify(parsedData),
       });
 
       const result = await res.json();
@@ -136,7 +140,6 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
         </div>
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
-
         <div className="flex justify-center">
           <Button type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit Post"}
