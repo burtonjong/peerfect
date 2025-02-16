@@ -6,15 +6,23 @@ import HeaderAuth from "@/components/header-auth";
 
 export default function Header() {
   return (
-    <nav className="sticky top-0 flex h-16 w-full justify-center bg-background/50 backdrop-blur-md">
-      <div className="flex w-full max-w-5xl items-center justify-between p-3 px-5 text-sm">
+    <nav className="sticky top-0 z-10 flex h-16 w-full justify-center bg-background/50 backdrop-blur-md">
+      <div className="flex w-full max-w-7xl items-center justify-between p-3 px-8 text-sm">
         <div className="flex items-center gap-5 font-semibold">
           <Link
-            href={"/"}
-            className="font-brand flex flex-row items-center text-xl text-primary"
+            href={"/dashboard"}
+            className="group flex flex-row items-center font-brand text-xl text-primary" // Add group class
           >
-            <Handshake size="24" strokeWidth={2} className="mr-1" />
-            Peerfect
+            <Handshake
+              size="24"
+              strokeWidth={2}
+              className="mr-1 transform transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" // Handshake hover animation
+            />
+            <span className="transition-all duration-300 group-hover:text-primary/80">
+              {" "}
+              {/* Title hover effect */}
+              Peerfect
+            </span>
           </Link>
         </div>
         <HeaderAuth />

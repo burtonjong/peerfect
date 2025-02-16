@@ -18,7 +18,7 @@ export default function Footer({ className }: { className?: string }) {
                 Sign up
               </Link>
               <span className="hidden sm:inline">|</span>
-              <Link href="#" className="hover:underline">
+              <Link href="/privacy-policy" className="hover:underline">
                 Privacy Policy
               </Link>
               <Link href="#" className="hover:underline">

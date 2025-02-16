@@ -1,68 +1,124 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Search, SchoolIcon as Teach, Calendar } from "lucide-react"
+import Link from "next/link";
 
-export default function DashboardPage() {
+import { Plus, SchoolIcon as Teach } from "lucide-react";
+
+import Leaderboard from "@/components/dashboard/leaderboard";
+import RecentChats from "@/components/dashboard/recentChats";
+import YourPosts from "@/components/dashboard/yourPosts";
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
+
+const formatDateToLocaleString = (date: string) => {
+  const postDate = new Date(date);
+  const now = new Date();
+  const diffInMs = now.getTime() - postDate.getTime();
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  if (diffInDays > 7) {
+    return postDate.toLocaleString();
+  } else if (diffInDays > 0) {
+    return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+  } else if (diffInHours > 0) {
+    return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
+  } else {
+    return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
+  }
+};
+
+export default async function DashboardPage() {
+  const supabase = await createClient();
+
+  const userId = (await supabase.auth.getUser()).data.user?.id;
+
+  const getUsersPosts = async () => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("author_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+    }
+
+    return data;
+  };
+
+  const getConversations = async () => {
+    const { data, error } = await supabase
+      .from("conversations")
+      .select("*, post_id(*), poster_id(*), responder_id(*)")
+      .or(`poster_id.eq.${userId},responder_id.eq.${userId}`);
+
+    if (error) {
+      console.error(error);
+    }
+
+    return data;
+  };
+
+  const getLeaderboard = async () => {
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .order("points", { ascending: false });
+
+    if (error) {
+      console.error(error);
+    }
+
+    return data;
+  };
+
+  const usersPosts = await getUsersPosts();
+  const conversations = await getConversations();
+  const leaderboard = await getLeaderboard();
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Welcome to Peerfect</h1>
+      <h1 className="animate-fade-in-up mb-8 font-brand text-6xl font-bold text-primary transition-all">
+        Welcome to Peerfect
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        <div className="border rounded-lg p-4">
-          <h3 className="text-xl font-semibold">Find Skills to Learn</h3>
+      <div className="animate-fade-in-up-1 mb-12 grid grid-cols-1 gap-6 transition-all md:grid-cols-2">
+        <div className="rounded-lg border p-4">
+          <h3 className="font-brand text-xl font-semibold">
+            Learn a New Skill
+          </h3>
           <p className="text-gray-600">Discover new skills taught by peers</p>
-          <Link href="/browse">
-            <Button className="w-full mt-4">
-              <Search className="mr-2 h-4 w-4" /> Browse Skills
+          <Link href="/dashboard/createPost" passHref>
+            <Button className="mt-4 w-full">
+              <Plus className="mr-2 h-4 w-4" /> Create a Listing
             </Button>
           </Link>
         </div>
 
-        <div className="border rounded-lg p-4">
-          <h3 className="text-xl font-semibold">Offer Your Expertise</h3>
+        <div className="rounded-lg border p-4">
+          <h3 className="font-brand text-xl font-semibold">
+            Offer Your Expertise
+          </h3>
           <p className="text-gray-600">Share your skills with others</p>
-          <Button className="w-full mt-4">
-            <Teach className="mr-2 h-4 w-4" /> Create a Listing
-          </Button>
-        </div>
-      </div>
-
-      <h2 className="text-2xl font-semibold mb-4">Your Upcoming Sessions</h2>
-      <div className="space-y-4">
-        <div className="border rounded-lg p-4">
-          <h3 className="text-xl font-semibold">Introduction to Python</h3>
-          <p className="text-gray-600">With John Doe • Tomorrow at 2:00 PM</p>
-          <Button variant="outline" className="mt-4">
-            <Calendar className="mr-2 h-4 w-4" /> Join Meeting
-          </Button>
-        </div>
-
-        <div className="border rounded-lg p-4">
-          <h3 className="text-xl font-semibold">Digital Marketing Basics</h3>
-          <p className="text-gray-600">With Jane Smith • Friday at 10:00 AM</p>
-          <Button variant="outline" className="mt-4">
-            <Calendar className="mr-2 h-4 w-4" /> Join Meeting
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">Quick Links</h2>
-        <div className="flex flex-wrap gap-4">
-          <Link href="/profile" className="text-primary hover:underline">
-            My Profile
-          </Link>
-          <Link href="/messages" className="text-primary hover:underline">
-            Messages
-          </Link>
-          <Link href="/settings" className="text-primary hover:underline">
-            Account Settings
-          </Link>
-          <Link href="/help" className="text-primary hover:underline">
-            Help & Support
+          <Link href="/dashboard/browse" passHref>
+            <Button className="mt-4 w-full">
+              <Teach className="mr-2 h-4 w-4" /> Browse Listings
+            </Button>
           </Link>
         </div>
       </div>
+
+      <YourPosts
+        conversations={conversations ?? []}
+        usersPosts={usersPosts ?? []}
+        formatDateToLocaleString={formatDateToLocaleString}
+      />
+      <RecentChats
+        conversations={conversations ?? []}
+        userId={userId ?? ""}
+        formatDateToLocaleString={formatDateToLocaleString}
+      />
+      <Leaderboard leaderboard={leaderboard ?? []} />
     </div>
-  )
+  );
 }

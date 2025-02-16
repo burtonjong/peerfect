@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label";
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
   return (
-    <form className="flex min-w-96 flex-1 flex-col">
+    <form className="mx-auto mt-12 flex min-w-96 max-w-96 flex-col">
       <h1 className="font-brand text-3xl font-medium">Sign in</h1>
       <p className="text-sm text-foreground">
         Don't have an account?{" "}
-        <Link className="font-medium text-foreground underline" href="/sign-up">
+        <Link className="font-medium text-primary underline" href="/sign-up">
           Sign up
         </Link>
       </p>
@@ -38,7 +38,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         <SubmitButton
           pendingText="Signing In..."
           formAction={signInAction}
-          className="font-brand text-md"
+          className="text-md font-brand"
         >
           Sign in
         </SubmitButton>

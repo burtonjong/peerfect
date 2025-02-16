@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React from "react";
 
 import { signUpAction } from "@/app/actions";
@@ -10,10 +9,9 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { SmtpMessage } from "../smtp-message";
+// import { SmtpMessage } from "../smtp-message";
 
 export default function Signup(props: { searchParams: Promise<Message> }) {
-  const router = useRouter();
   const [message, setMessage] = React.useState<Message | null>(null);
 
   React.useEffect(() => {
@@ -24,18 +22,11 @@ export default function Signup(props: { searchParams: Promise<Message> }) {
     });
   }, [props.searchParams]);
 
-  if (message) {
-    return (
-      <div className="flex h-screen w-full flex-1 items-center justify-center gap-2 p-4 sm:max-w-md">
-        <FormMessage message={message} />
-      </div>
-    );
-  }
-
   const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const result = await signUpAction(formData);
+    await signUpAction(formData);
+    setMessage({ message: "Please check your email to confirm your account." });
   };
 
   return (
@@ -70,10 +61,10 @@ export default function Signup(props: { searchParams: Promise<Message> }) {
           >
             Sign up
           </SubmitButton>
-          {message && <FormMessage message={message} />}
         </div>
       </form>
-      <SmtpMessage />
+      {message && <FormMessage message={message} />}
+      {/* <SmtpMessage /> */}
     </>
   );
 }
