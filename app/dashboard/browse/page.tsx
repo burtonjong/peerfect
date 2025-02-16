@@ -40,24 +40,20 @@ export default async function BrowsePage({ searchParams }: Props) {
     (post: any) => post.conversations?.length === 0
   );
 
-  const postsThatAreNotUsers = postsWithoutConversations.filter(
-    (post: any) => post.author_id !== userId
-  );
-
-  if (freakyBoolean && postsThatAreNotUsers.length > 0) {
-    const sortedPosts = [...postsThatAreNotUsers].sort((a, b) => {
+  if (freakyBoolean && postsWithoutConversations.length > 0) {
+    const sortedPosts = [...postsWithoutConversations].sort((a, b) => {
       const dateA = new Date(a.created_at || "").getTime();
       const dateB = new Date(b.created_at || "").getTime();
       return dateB - dateA;
     });
 
-    postsThatAreNotUsers.unshift(sortedPosts[0]);
+    postsWithoutConversations.unshift(sortedPosts[0]);
   }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <BrowsePageClient
-        initialPosts={postsThatAreNotUsers}
+        initialPosts={postsWithoutConversations}
         userId={userId}
         modal={freakyBoolean}
       />

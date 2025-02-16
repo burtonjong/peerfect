@@ -32,6 +32,7 @@ type BrowsePageClientProps = {
 export default function BrowsePageClient({
   initialPosts,
   userId,
+  modal,
 }: BrowsePageClientProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [sortedPosts, setSortedPosts] = useState<Post[]>(initialPosts);
@@ -41,7 +42,7 @@ export default function BrowsePageClient({
   useEffect(() => {
     if (posts.length > 0) {
       const sorted = [...posts].sort((a, b) => {
-        if (!a.created_at || !b.created_at) return 0; // Handle invalid or missing dates
+        if (!a.created_at || !b.created_at) return 0;
         const dateA = new Date(a.created_at);
         const dateB = new Date(b.created_at);
         return sortOrder === "desc"
@@ -54,7 +55,7 @@ export default function BrowsePageClient({
 
   const handleSortChange = (order: "asc" | "desc") => {
     setSortOrder(order);
-    setDropdownOpen(false); // Close dropdown after selection
+    setDropdownOpen(false);
   };
 
   return (

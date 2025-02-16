@@ -1,7 +1,6 @@
 import Features from "@/components/landingpage/features";
 import GetStarted from "@/components/landingpage/get-started";
 import HeroSection from "@/components/landingpage/hero-section";
-import SuccessStories from "@/components/landingpage/success-stories";
 import WhyPeerfect from "@/components/landingpage/why-peerfect";
 
 export default function LandingPage() {
@@ -11,7 +10,6 @@ export default function LandingPage() {
         <HeroSection />
         <WhyPeerfect />
         <Features />
-        <SuccessStories />
         <GetStarted />
       </main>
     </div>
