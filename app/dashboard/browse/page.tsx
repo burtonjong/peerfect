@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { ChevronDown, ChevronUp } from "lucide-react";
+
 import Post from "@/components/browse/post";
 import Sidebar from "@/components/browse/sidebar";
 import { Button } from "@/components/ui/button";
@@ -43,21 +45,7 @@ export default function BrowsePage() {
         setLoading(false);
       }
     };
-
-    const fetchSkills = async () => {
-      try {
-        const res = await fetch(`${window.location.origin}/api/skills`);
-        const data = await res.json();
-        if (data && !data.error) {
-          setSkills(data);
-        }
-      } catch (error) {
-        console.error("Error fetching skills:", error);
-      }
-    };
-
     fetchPosts();
-    fetchSkills();
   }, []);
 
   useEffect(() => {
@@ -81,10 +69,9 @@ export default function BrowsePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1">
-        <Sidebar skills={skills} />
-        <main className="ml-64 flex-1 bg-gradient-to-br from-gray-50 to-gray-100 p-8 pb-16 dark:from-gray-900 dark:to-gray-800">
+        <main className="ml-64 min-w-[1000px] flex-1 rounded-md bg-gradient-to-br from-gray-50 to-gray-100 p-6 pb-16 dark:from-gray-900 dark:to-gray-800">
           <div className="container mx-auto px-4">
-            <div className="mb-4 mt-4 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between">
               <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
                 All Posts
               </h1>
@@ -125,12 +112,12 @@ export default function BrowsePage() {
                     skill={post.skill}
                     created_at={post.created_at}
                     author_id={post.author_id}
-                    className="max-w-xs max-h-96" // Add max width and height
+                    className="max-h-96 max-w-xs" // Add max width and height
                   />
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-600 dark:text-gray-400">
+              <p className="text-center text-gray-600 dark:text-gray-400 pt-40">
                 No posts available for this skill.
               </p>
             )}
