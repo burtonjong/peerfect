@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Send } from "lucide-react";
 
-import * as schema from "@/database.types";
+import { createClient } from "@/utils/supabase/client";
 
+import Message from "./Message";
 import { sendMessage } from "./actions";
 
 export default function ChatPage({
   userId,
+  username,
   post,
-  messages: initialMessages,
   conversationId,
 }: {
   userId: string;
+  username: string;
   post: {
     title: string;
     body: string;
@@ -25,29 +27,46 @@ export default function ChatPage({
       profilePicture: string;
     };
   };
-  messages: {
-    user: {
-      name: string;
-      userId: string;
-      profilePicture: string;
-    };
-    content: string;
-  }[];
   conversationId: string;
 }) {
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState(initialMessages);
-  const currentUserId = userId;
+  const [messages, setMessages] = useState([]);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("public:messages")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          console.log(payload);
+          console.log("FIRED");
+          const newMessage = payload.new;
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId]);
 
   const handleSendMessage = async () => {
     if (newMessage.trim() !== "") {
       const newMessageObject = {
         user: {
-          name: "Current User",
-          userId: currentUserId,
-          profilePicture: "path/to/currentUserProfilePicture",
+          username,
+          user_id: userId,
         },
-        message: newMessage,
+        content: newMessage,
       };
       setMessages([...messages, newMessageObject]);
       setNewMessage("");
@@ -55,7 +74,7 @@ export default function ChatPage({
       const formData = new FormData();
       formData.append("message", newMessage);
       formData.append("conversationId", conversationId);
-      formData.append("userId", currentUserId);
+      formData.append("user_id", userId);
 
       await sendMessage(formData);
     }
@@ -63,7 +82,7 @@ export default function ChatPage({
 
   return (
     <div className="flex h-full w-full flex-1">
-      <div className="m-2 flex w-1/3 flex-col justify-between rounded-lg bg-white p-4 shadow-md">
+      <div className="m-2 flex w-1/3 flex-col justify-between rounded-lg border border-muted-foreground/20 bg-muted/50 p-4 shadow-md">
         <div>
           <h5 className="mb-2 text-xl font-bold">{post.title}</h5>
           <p className="text-base">
@@ -89,41 +108,7 @@ export default function ChatPage({
       <div className="m-2 flex flex-grow flex-col">
         <div className="flex-grow overflow-y-auto rounded-lg border border-gray-300 p-4">
           {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`mb-4 flex gap-2 p-2 ${
-                message?.user?.user_id === currentUserId
-                  ? "justify-end"
-                  : "justify-start"
-              }`}
-            >
-              {message?.user?.user_id !== currentUserId && (
-                <img
-                  src={message?.user?.profilePicture}
-                  alt="JD"
-                  className="h-10 w-10 rounded-full border"
-                />
-              )}
-              <div
-                className={`max-w-xs rounded-2xl p-2 ${
-                  message?.user?.user_id === currentUserId
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-300 text-black"
-                }`}
-              >
-                <h6 className="text-sm font-semibold">
-                  {message?.user?.username}
-                </h6>
-                <p className="text-xs">{message.content}</p>
-              </div>
-              {message?.user?.user_id === currentUserId && (
-                <img
-                  src={message?.user?.profilePicture}
-                  alt="JD"
-                  className="h-10 w-10 rounded-full border"
-                />
-              )}
-            </div>
+            <Message key={index} message={message} userId={userId} />
           ))}
         </div>
         <div className="mt-2 flex">

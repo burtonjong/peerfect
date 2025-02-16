@@ -13,6 +13,8 @@ drop table if exists user_profiles;
 -- Drop the skills table (if it exists)
 drop table if exists skills;
 
+drop type if exists skill_enum;
+
 -- Create the skill_enum type
 create type skill_enum as enum (
   'Laundry',

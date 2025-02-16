@@ -1,18 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+
 import { Plus, X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 //placeholder for now
 const skills = ["python", "java", "c", "javascript"];
 
 export default function CreatePost() {
   const [postData, setPostData] = useState({
-    title: '',
-    content: '',
-    category: '',
-    tags: '',
+    title: "",
+    content: "",
+    category: "",
+    tags: "",
     skills: [] as string[],
   });
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -21,7 +23,9 @@ export default function CreatePost() {
     setDropdownOpen(false);
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setPostData({
       ...postData,
@@ -48,12 +52,11 @@ export default function CreatePost() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Post created:', postData);
     setPostData({
-      title: '',
-      content: '',
-      category: '',
-      tags: '',
+      title: "",
+      content: "",
+      category: "",
+      tags: "",
       skills: [],
     });
   };
@@ -64,9 +67,11 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="container min-w-[750px] mx-auto px-4 py-8 flex justify-center">
-      <div className="border shadow-lg rounded-lg p-6 max-w-lg w-full relative">
-        <h2 className="text-3xl font-bold mb-6 text-center">Create a New Post</h2>
+    <div className="container mx-auto flex min-w-[750px] justify-center px-4 py-8">
+      <div className="relative w-full max-w-lg rounded-lg border p-6 shadow-lg">
+        <h2 className="mb-6 text-center text-3xl font-bold">
+          Create a New Post
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-lg font-medium">Title</label>
@@ -75,7 +80,7 @@ export default function CreatePost() {
               name="title"
               value={postData.title}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-lg bg-transparent focus:ring focus:ring-blue-500"
+              className="w-full rounded-lg border bg-transparent px-4 py-2 focus:ring focus:ring-blue-500"
               required
             />
           </div>
@@ -87,22 +92,29 @@ export default function CreatePost() {
               value={postData.content}
               onChange={handleInputChange}
               rows={6}
-              className="w-full px-4 py-2 border rounded-lg bg-transparent focus:ring focus:ring-blue-500"
+              className="w-full rounded-lg border bg-transparent px-4 py-2 focus:ring focus:ring-blue-500"
               required
             />
           </div>
 
           <div>
             <label className="block text-lg font-medium">Skills</label>
-            <div className="flex items-center gap-4 mt-2">
+            <div className="mt-2 flex items-center gap-4">
               <Button variant="outline" onClick={handleDropdownToggle}>
                 <Plus className="mr-2 h-4 w-4" /> Add Skill
               </Button>
-              <div className="flex flex-wrap gap-2 min-h-[40px]">
+              <div className="flex min-h-[40px] flex-wrap gap-2">
                 {postData.skills.map((skill) => (
-                  <span key={skill} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full flex items-center gap-2">
+                  <span
+                    key={skill}
+                    className="flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-blue-700"
+                  >
                     {skill}
-                    <button type="button" onClick={() => handleRemoveSkill(skill)} className="text-red-500">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSkill(skill)}
+                      className="text-red-500"
+                    >
                       <X className="h-4 w-4" />
                     </button>
                   </span>
@@ -111,23 +123,28 @@ export default function CreatePost() {
             </div>
 
             {dropdownOpen && (
-              <div className="absolute mt-2 bg-blue-50 border border-blue-200 rounded-lg shadow-lg w-48 z-10">
-                {skills.filter((skill) => !postData.skills.includes(skill)).map((skill) => (
-                  <button
-                    key={skill}
-                    type="button"
-                    onClick={() => handleSkillSelect(skill)}
-                    className="block w-full px-4 py-2 text-left text-blue-600 hover:bg-blue-100"
-                  >
-                    {skill}
-                  </button>
-                ))}
+              <div className="absolute z-10 mt-2 w-48 rounded-lg border border-blue-200 bg-blue-50 shadow-lg">
+                {skills
+                  .filter((skill) => !postData.skills.includes(skill))
+                  .map((skill) => (
+                    <button
+                      key={skill}
+                      type="button"
+                      onClick={() => handleSkillSelect(skill)}
+                      className="block w-full px-4 py-2 text-left text-blue-600 hover:bg-blue-100"
+                    >
+                      {skill}
+                    </button>
+                  ))}
               </div>
             )}
           </div>
 
           <div className="flex justify-center">
-            <Button type="submit" className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+            <Button
+              type="submit"
+              className="rounded-lg bg-blue-500 px-6 py-2 text-white hover:bg-blue-600"
+            >
               Submit Post
             </Button>
           </div>
