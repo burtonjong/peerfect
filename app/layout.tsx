@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { Gabarito, Inter } from "next/font/google";
+import type React from "react";
+
 import { ThemeProvider } from "next-themes";
+
+import ClientSideComponent from "@/components/client-side-component";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import ClientSideComponent from "@/components/client-side-component";
 
-import { Gabarito, Inter } from "next/font/google";
-import type React from "react"
-import "./globals.css"
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--inter-font" });
 const gabarito = Gabarito({ subsets: ["latin"], variable: "--gabarito-font" });
@@ -27,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -35,11 +37,11 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange={true}
         >
-          <div className="min-h-screen flex flex-col">
+          <div className="flex min-h-screen flex-col">
             <ClientSideComponent>
               <Header />
             </ClientSideComponent>
-            <main className="flex-1 flex min-h-screen flex-col items-center">
+            <main className="flex flex-1 flex-col items-center">
               <div className="flex w-full flex-1 flex-col items-center gap-20">
                 <div className="flex max-w-5xl flex-col gap-20 p-5">
                   {children}
