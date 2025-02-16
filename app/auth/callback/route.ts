@@ -29,7 +29,11 @@ export async function GET(request: Request) {
         });
       }
 
-      if (user && user.email_confirmed_at !== null && user.email_confirmed_at !== "") {
+      if (
+        user &&
+        user.email_confirmed_at !== null &&
+        user.email_confirmed_at !== ""
+      ) {
         // Redirect to onboarding if email is verified
         return NextResponse.redirect(`${origin}/onboarding`);
       } else {
@@ -51,5 +55,5 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/protected`);
+  return NextResponse.redirect(`${origin}/dashboard`);
 }
