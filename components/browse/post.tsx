@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { createChat } from "@/app/dashboard/browse/actions";
 import Modal from "@/components/browse/modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,9 +13,19 @@ type PostProps = {
   body: string;
   skill: string;
   created_at: string | null;
+  poster_id: string;
+  user_id: string;
 };
 
-const Post = ({ id, title, body, skill, created_at }: PostProps) => {
+const Post = ({
+  id,
+  title,
+  body,
+  skill,
+  created_at,
+  poster_id,
+  user_id,
+}: PostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -24,6 +35,15 @@ const Post = ({ id, title, body, skill, created_at }: PostProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleStartChat = async () => {
+    const formData = new FormData();
+    formData.set("post_id", id);
+    formData.set("poster_id", poster_id);
+    formData.set("responder_id", user_id);
+    await createChat(formData);
+  };
+
   return (
     <Card key={id} className="mb-8">
       <CardContent>
@@ -45,7 +65,7 @@ const Post = ({ id, title, body, skill, created_at }: PostProps) => {
           </p>
           <p className="mb-4">{body}</p>
           {/* Button to start chat here, connect it via on click i guess idk*/}
-          <Button onClick={() => alert("Start Chat")}>Start Chat</Button>
+          <Button onClick={() => handleStartChat()}>Start Chat</Button>
         </Modal>
         <div className="mt-4">
           <Badge variant="secondary" className="rounded-sm text-sm">
