@@ -1,11 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+
+import { Send } from "lucide-react";
 
 export default function ChatPage({
+  userId,
+
   post,
-  messages,
+  messages: initialMessages,
 }: {
+  userId: string;
   post: {
     title: string;
     body: string;
@@ -25,6 +30,25 @@ export default function ChatPage({
     message: string;
   }[];
 }) {
+  const [newMessage, setNewMessage] = useState("");
+  const [messages, setMessages] = useState(initialMessages);
+  const currentUserId = userId;
+
+  const handleSendMessage = () => {
+    if (newMessage.trim() !== "") {
+      const newMessageObject = {
+        user: {
+          name: "Current User",
+          userId: currentUserId,
+          profilePicture: "path/to/currentUserProfilePicture",
+        },
+        message: newMessage,
+      };
+      setMessages([...messages, newMessageObject]);
+      setNewMessage("");
+    }
+  };
+
   return (
     <div className="flex h-full w-full flex-1">
       <div className="m-2 flex w-1/3 flex-col justify-between rounded-lg bg-white p-4 shadow-md">
@@ -55,17 +79,36 @@ export default function ChatPage({
           {messages.map((message, index) => (
             <div
               key={index}
-              className="mb-4 flex gap-2 rounded-2xl rounded-bl-none bg-primary/10 p-2"
+              className={`mb-4 flex gap-2 p-2 ${
+                message.user.userId === currentUserId
+                  ? "justify-end"
+                  : "justify-start"
+              }`}
             >
-              <img
-                src={message.user.profilePicture}
-                alt="JD"
-                className="h-10 w-10 rounded-full border"
-              />
-              <div>
+              {message.user.userId !== currentUserId && (
+                <img
+                  src={message.user.profilePicture}
+                  alt="JD"
+                  className="h-10 w-10 rounded-full border"
+                />
+              )}
+              <div
+                className={`max-w-xs rounded-2xl p-2 ${
+                  message.user.userId === currentUserId
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-300 text-black"
+                }`}
+              >
                 <h6 className="text-sm font-semibold">{message.user.name}</h6>
-                <p className="text-xs text-gray-600">{message.message}</p>
+                <p className="text-xs">{message.message}</p>
               </div>
+              {message.user.userId === currentUserId && (
+                <img
+                  src={message.user.profilePicture}
+                  alt="JD"
+                  className="h-10 w-10 rounded-full border"
+                />
+              )}
             </div>
           ))}
         </div>
@@ -74,9 +117,14 @@ export default function ChatPage({
             type="text"
             placeholder="Type your message..."
             className="flex-grow rounded-lg border border-gray-300 p-2"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
           />
-          <button className="ml-2 rounded-lg bg-blue-500 p-2 text-white">
-            Send
+          <button
+            className="ml-2 flex aspect-square items-center justify-center rounded-full bg-blue-500 p-2 text-white"
+            onClick={handleSendMessage}
+          >
+            <Send size="16" strokeWidth={2} />
           </button>
         </div>
       </div>

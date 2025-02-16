@@ -1,3 +1,5 @@
+import { createClient } from "@/utils/supabase/server";
+
 import ChatPage from "./chat-page-client";
 
 const mockData = {
@@ -23,6 +25,23 @@ const mockData = {
   ],
 };
 
-export default function ChatPageServer() {
-  return <ChatPage post={mockData.post} messages={mockData.messages} />;
+export default async function ChatPageServer() {
+  const getUser = async () => {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      throw error;
+    }
+    return data;
+  };
+
+  const userId = (await getUser()).user.id;
+
+  return (
+    <ChatPage
+      userId={userId}
+      post={mockData.post}
+      messages={mockData.messages}
+    />
+  );
 }
