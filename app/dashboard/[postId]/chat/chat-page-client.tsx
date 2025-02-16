@@ -38,6 +38,7 @@ export default function ChatPage({
   };
 
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [readyToEnd, setReadyToEnd] = useState<string[]>([]);
 
   const supabase = createClient();
 
@@ -153,6 +154,44 @@ export default function ChatPage({
     };
   }, [conversationId, supabase]);
 
+  useEffect(() => {
+    const fetchConversationStatus = async () => {
+      const { data, error } = await supabase
+        .from("conversations")
+        .select("ready_to_end")
+        .eq("id", conversationId)
+        .single();
+
+      if (!error && data) {
+        setReadyToEnd(data.ready_to_end || []);
+      }
+    };
+
+    fetchConversationStatus();
+
+    const channel = supabase
+      .channel("public:conversations")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "conversations",
+          filter: `id=eq.${conversationId}`,
+        },
+        (payload) => {
+          if (payload.new) {
+            setReadyToEnd(payload.new.ready_to_end || []);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId, supabase]);
+
   const scrollToBottom = () => {
     setTimeout(() => {
       scrollToBottomRef.current?.scrollIntoView({
@@ -178,6 +217,27 @@ export default function ChatPage({
     }
   };
 
+  const handleEndChat = async () => {
+    try {
+      const newReadyToEnd = readyToEnd.includes(userId)
+        ? readyToEnd.filter((id) => id !== userId)
+        : [...readyToEnd, userId];
+
+      const { error } = await supabase
+        .from("conversations")
+        .update({ ready_to_end: newReadyToEnd })
+        .eq("id", conversationId);
+
+      if (error) throw error;
+
+      setReadyToEnd(newReadyToEnd);
+    } catch (error) {
+      console.error("Error updating chat status:", error);
+    }
+  };
+
+  const isEveryoneReady = readyToEnd.length === 2;
+
   return (
     <div className="flex max-h-[calc(100vh-208px)] w-full flex-1">
       <div className="m-2 flex w-1/3 flex-col justify-between rounded-lg border border-muted-foreground/20 bg-muted/50 p-4 shadow-md">
@@ -198,27 +258,51 @@ export default function ChatPage({
         </div>
       </div>
       <div className="m-2 flex flex-grow flex-col">
+        {isEveryoneReady && (
+          <div className="mb-4 rounded-lg bg-green-100 p-4 text-green-700">
+            Chat has ended. Both users have agreed to finish.
+          </div>
+        )}
         <div className="flex-grow overflow-y-auto rounded-lg border border-gray-300 p-4">
           {messages.map((message, index) => (
             <Message key={index} message={message} userId={userId} />
           ))}
           <div ref={scrollToBottomRef} />
         </div>
-        <div className="mt-2 flex">
+        <div className="mt-2 flex items-center gap-2">
           <input
             type="text"
             placeholder="Type your message..."
             className="flex-grow rounded-lg border border-gray-300 p-2"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            disabled={isEveryoneReady}
           />
           <button
-            className="ml-2 flex aspect-square items-center justify-center rounded-full bg-blue-500 p-2 text-white"
+            className="ml-2 flex aspect-square items-center justify-center rounded-full bg-blue-500 p-2 text-white disabled:opacity-50"
             onClick={handleSendMessage}
+            disabled={isEveryoneReady}
           >
             <Send size="16" strokeWidth={2} />
           </button>
+          <button
+            onClick={handleEndChat}
+            className={`rounded-lg px-4 py-2 ${
+              readyToEnd.includes(userId)
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-red-500 hover:bg-red-600"
+            } text-white`}
+          >
+            {readyToEnd.includes(userId) ? "Cancel End" : "End Chat"}
+          </button>
         </div>
+        {readyToEnd.length > 0 && !isEveryoneReady && (
+          <div className="mt-2 text-sm text-gray-600">
+            {readyToEnd.includes(userId)
+              ? "Waiting for the other user to end the chat..."
+              : "The other user wants to end the chat. Click 'End Chat' if you agree."}
+          </div>
+        )}
       </div>
     </div>
   );

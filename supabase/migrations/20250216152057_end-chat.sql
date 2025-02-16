@@ -1,0 +1,1 @@
+alter table conversations add column if not exists ready_to_end text[] default '{}';
