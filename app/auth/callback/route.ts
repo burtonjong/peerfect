@@ -12,8 +12,38 @@ export async function GET(request: Request) {
   const redirectTo = requestUrl.searchParams.get("redirect_to")?.toString();
 
   if (code) {
-    const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    try {
+      const supabase = await createClient();
+      await supabase.auth.exchangeCodeForSession(code);
+
+      // Check if the user's email is verified
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error("Error retrieving user:", userError);
+        return NextResponse.json({
+          message: "Error retrieving user data.",
+        });
+      }
+
+      if (user && user.email_confirmed_at !== null && user.email_confirmed_at !== "") {
+        // Redirect to onboarding if email is verified
+        return NextResponse.redirect(`${origin}/onboarding`);
+      } else {
+        // Inform the user to verify their email
+        return NextResponse.json({
+          message: "Please verify your email to continue.",
+        });
+      }
+    } catch (error) {
+      console.error("Error in callback route:", error);
+      return NextResponse.json({
+        message: "An error occurred during the authentication process.",
+      });
+    }
   }
 
   if (redirectTo) {
