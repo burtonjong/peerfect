@@ -46,7 +46,7 @@ export default function FancyModal({ isOpen, onClose, children }: ModalProps) {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="absolute right-4 top-4 text-gray-400 transition-colors hover:text-gray-200"
+              className="absolute right-4 top-4 z-10 text-gray-400 transition-colors hover:text-gray-200"
             >
               <X className="h-8 w-8" />
             </motion.button>

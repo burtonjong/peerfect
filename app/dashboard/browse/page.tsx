@@ -86,7 +86,7 @@ export default function BrowsePage() {
           <div className="container mx-auto px-4">
             <div className="mb-4 mt-4 flex items-center justify-between">
               <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
-                Browse Skills
+                All Posts
               </h1>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
