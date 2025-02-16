@@ -48,8 +48,8 @@ export default function RootLayout({
                 </div>
               </div>
             </main>
+            <Footer className="relative z-10" />
           </div>
-          <Footer className="relative z-10" />
         </ThemeProvider>
       </body>
     </html>

@@ -148,7 +148,7 @@ export default function ChatPage({
   };
 
   return (
-    <div className="flex h-full w-full flex-1">
+    <div className="flex max-h-[calc(100vh-208px)] w-full flex-1">
       <div className="m-2 flex w-1/3 flex-col justify-between rounded-lg border border-muted-foreground/20 bg-muted/50 p-4 shadow-md">
         <div>
           <h5 className="mb-2 text-xl font-bold">{post.title}</h5>
