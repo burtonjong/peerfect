@@ -1,6 +1,7 @@
 import { ReactNode, Suspense, use } from "react";
 
 import { createClient } from "@/utils/supabase/server";
+
 import BrowsePageClient from "./browse-page-client";
 
 type Props = {
