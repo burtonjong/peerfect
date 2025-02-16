@@ -27,6 +27,7 @@ import Dropdown from "./dropdown";
 const profileFormSchema = z.object({
   skillsGoodAt: z.array(z.string()),
   skillsNeedHelpWith: z.array(z.string()),
+  points: z.number(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -34,6 +35,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 const defaultValues: Partial<ProfileFormValues> = {
   skillsGoodAt: [],
   skillsNeedHelpWith: [],
+  points: 0,
 };
 
 export function ProfileContent({ user, enums }: { user: any; enums: any }) {
@@ -62,9 +64,9 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
     async function fetchData() {
       try {
         if (user) {
-          const { data: skillsData, error } = await supabase
+          const { data, error } = await supabase
             .from("user_profiles")
-            .select("skills_had, skills_needed")
+            .select("skills_had, skills_needed, points")
             .eq("id", user.id)
             .single();
 
@@ -72,8 +74,9 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
             throw error;
           }
 
-          form.setValue("skillsGoodAt", skillsData.skills_had || []);
-          form.setValue("skillsNeedHelpWith", skillsData.skills_needed || []);
+          form.setValue("skillsGoodAt", data.skills_had || []);
+          form.setValue("skillsNeedHelpWith", data.skills_needed || []);
+          form.setValue("points", data.points || 0);
         }
       } catch (error) {
         console.error("Failed to fetch data", error);
@@ -152,6 +155,8 @@ export function ProfileContent({ user, enums }: { user: any; enums: any }) {
 
   return (
     <CardContent>
+      <h1 className="py-2">Your points: {form.getValues("points")}</h1>
+      <Separator className="mb-6" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
