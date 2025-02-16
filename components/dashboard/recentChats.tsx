@@ -45,9 +45,6 @@ export default function RecentChats({
                       <Send className="mr-2 h-4 w-4" /> Chat
                     </Button>
                   </Link>
-                  <Button variant="outline" className="mt-4">
-                    <Search className="mr-2 h-4 w-4" /> View Post
-                  </Button>
                 </div>
               </div>
             );
