@@ -1,4 +1,5 @@
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import { Gabarito, Inter } from "next/font/google";
 import type React from "react";
 
 import { ThemeProvider } from "next-themes";
@@ -21,18 +22,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="flex min-h-screen flex-col">
-          <ClientSideComponent>
-            <Header />
-          </ClientSideComponent>
-          <main className="flex min-h-screen flex-1 flex-col items-center">
-            <div className="flex w-full flex-1 flex-col items-center gap-20">
-              <div className="flex max-w-5xl flex-col gap-20 p-5">
-                {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          disableTransitionOnChange={true}
+        >
+          <div className="flex min-h-screen flex-col">
+            <ClientSideComponent>
+              <Header />
+            </ClientSideComponent>
+            <main className="flex flex-1 flex-col items-center">
+              <div className="flex w-full flex-1 flex-col items-center gap-20">
+                <div className="flex max-w-5xl flex-col gap-20 p-5">
+                  {children}
+                </div>
               </div>
-            </div>
           </main>
           <Footer className="relative z-10" />
         </div>
