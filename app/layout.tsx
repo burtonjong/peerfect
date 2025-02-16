@@ -23,11 +23,11 @@ export const metadata: Metadata = {
   icons: [
     {
       rel: "icon",
-      sizes: "16x16",
       url: "/favicon.ico",
     },
   ],
 };
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
