@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -18,19 +18,19 @@ const postFormSchema = z.object({
   body: z.string().min(1, "Description is required"),
   points: z.string(),
   skill: z.string(),
-})
+});
 
-type PostFormValues = z.infer<typeof postFormSchema>
+type PostFormValues = z.infer<typeof postFormSchema>;
 
 interface CreatePostFormProps {
-  enums: string[]
-  user: any
+  enums: string[];
+  user: any;
 }
 
 export function CreatePostForm({ enums, user }: CreatePostFormProps) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [skill, setSkill] = useState("")
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [skill, setSkill] = useState("");
 
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postFormSchema),
@@ -40,24 +40,24 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
       points: "0",
       skill: "",
     },
-  })
+  });
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = form
+  } = form;
 
   const handleFormSubmit = async (data: PostFormValues) => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     const parsedData = {
       ...data,
       points: Number(data.points),
       author_id: user.id,
       skill,
-    }
+    };
 
     try {
       const res = await fetch(`${window.location.origin}/api/posts`, {
@@ -66,26 +66,26 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(parsedData),
-      })
+      });
 
-      const result = await res.json()
+      const result = await res.json();
 
       if (res.ok) {
         form.reset()
         setSkill("")
 
       } else {
-        setError(result.error || "An error occurred while creating the post.")
+        setError(result.error || "An error occurred while creating the post.");
       }
     } catch (err) {
-      setError("An unexpected error occurred.")
+      setError("An unexpected error occurred.");
     } finally {
       setLoading(false)
       redirect(`/dashboard/browse?modal=true`)
 
 
     }
-  }
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -198,6 +198,5 @@ export function CreatePostForm({ enums, user }: CreatePostFormProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
