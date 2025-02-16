@@ -143,33 +143,6 @@ export default async function DashboardPage() {
           );
         })}
       </div>
-
-      <div className="mt-12">
-        <h2 className="mb-4 font-brand text-2xl font-semibold">Quick Links</h2>
-        <div className="flex flex-wrap gap-4">
-          <Link
-            href="/dashboard/profile"
-            className="text-primary hover:underline"
-          >
-            My Profile
-          </Link>
-          <Link
-            href="/dashboard/messages"
-            className="text-primary hover:underline"
-          >
-            Messages
-          </Link>
-          <Link
-            href="/dashboard/settings"
-            className="text-primary hover:underline"
-          >
-            Account Settings
-          </Link>
-          <Link href="/dashboard/help" className="text-primary hover:underline">
-            Help & Support
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }
