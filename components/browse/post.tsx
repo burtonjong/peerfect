@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { User } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 import { createChat } from "@/app/dashboard/browse/actions";
 import Modal from "@/components/browse/modal";
@@ -18,6 +19,7 @@ type PostProps = {
   created_at: string | null;
   poster_id: string;
   user_id: string;
+  modal?: boolean; 
 };
 
 type UserData = {
@@ -35,9 +37,12 @@ const Post = ({
   created_at,
   poster_id,
   user_id,
+  modal = false, 
 }: PostProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(modal);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const router = useRouter();
+
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -45,7 +50,10 @@ const Post = ({
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
+    const currentUrl = new URL(window.location.href);
+    currentUrl.search = ''; 
+    router.push(currentUrl.toString()); 
+ };
 
   const handleStartChat = async () => {
     const formData = new FormData();
@@ -68,6 +76,12 @@ const Post = ({
 
     fetchUserData();
   }, [poster_id]);
+
+  useEffect(() => {
+    if (modal) {
+      setIsModalOpen(true);
+    }
+  }, [modal]);
 
   return (
     <Card key={id} className="relative mb-8">
@@ -153,4 +167,4 @@ const Post = ({
   );
 };
 
-export default Post;
+export default Post
