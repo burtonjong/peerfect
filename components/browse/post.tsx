@@ -75,11 +75,8 @@ const Post = ({
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h2
-              className="max-w-full truncate text-2xl font-semibold"
+              className="text-2xl font-semibold"
               style={{
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
                 textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
               }}
             >
